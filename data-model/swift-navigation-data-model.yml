@@ -1,0 +1,97 @@
+generated: '2026-08-29'
+method: derived
+source: grpc/*.proto and spec/*.yaml in this repository
+name: Swift Navigation data model
+note: >-
+  Two unrelated domain models, derived from the two contracts in this repo. Nothing here is
+  guessed — every entity and every relationship is read from a published .proto or SBP YAML
+  definition.
+models:
+  - name: Sora
+    source: grpc/swift-navigation-sora-app-v1beta-types.proto, grpc/swift-navigation-sora-v1beta-common.proto
+    entities:
+      - name: Project
+        id: string
+        description: A partition of device state data and its analysis configuration.
+        fields: [id, name, description, color, demo_type, dashboard]
+        note: >-
+          Project.color is marked `[deprecated = true]` in the contract. Project.Dashboard is
+          declared internal with an explicit no-compatibility promise.
+      - name: Device
+        id: string
+        description: A process on a machine that authenticates to Sora and sends location data.
+        fields: [id, name, color, project_id, demo_type]
+      - name: DeviceState
+        description: One time-series sample — device time, server receive time, position, orientation, free-form user data.
+        fields: [device_id, time, time_received, pos, orientation, user_data]
+      - name: Event
+        description: A discrete occurrence at a position and time, typed by a string with a free-form payload.
+        fields: [device_id, time, time_received, pos, type, payload, alertor_id]
+      - name: Annotation
+        fields: [project_id, device_id, state_id, data]
+      - name: Annotator
+        description: Configuration that produces annotations on device state; config schema depends on `type`.
+        fields: [id, name, type, color, enabled, config, project_id]
+      - name: Alertor
+        description: Configuration for delivering an alert to an external system (e.g. Slack); config schema depends on `type`.
+      - name: EventGenerator
+        description: Configuration that derives Events from incoming state.
+      - name: Layer
+        description: A map layer in the Sora application.
+      - name: Position
+        kind: value-object
+        fields: [lat, lon, alt]
+        semantics: >-
+          Degrees latitude/longitude in WGS 84. Altitude in metres above the EGM2008 ellipsoid;
+          OMITTED alt means "local ground level", not zero — a distinction the contract states
+          explicitly and an integrator would otherwise get wrong.
+      - name: Orientation
+        kind: value-object
+        fields: [yaw, pitch, roll]
+        semantics: >-
+          Tait-Bryan intrinsic rotations applied yaw -> pitch -> roll, degrees clockwise, with
+          X north/ahead, Y east/right, Z down.
+    relationships:
+      - {from: Device, to: Project, type: has_many, via: Device.project_id, note: repeated field — a device may belong to several projects}
+      - {from: DeviceState, to: Device, type: belongs_to, via: DeviceState.device_id}
+      - {from: Event, to: Device, type: belongs_to, via: Event.device_id}
+      - {from: Event, to: Alertor, type: belongs_to, via: Event.alertor_id}
+      - {from: Annotation, to: Project, type: belongs_to, via: Annotation.project_id}
+      - {from: Annotation, to: Device, type: belongs_to, via: Annotation.device_id}
+      - {from: Annotation, to: DeviceState, type: belongs_to, via: Annotation.state_id}
+      - {from: Annotator, to: Project, type: belongs_to, via: Annotator.project_id}
+      - {from: AnnotatedDeviceState, to: Project, type: belongs_to, via: AnnotatedDeviceState.project_id}
+      - {from: DeviceStateWithProjectIds, to: Project, type: has_many, via: project_ids}
+    identifiers:
+      style: opaque strings for entities, uint64 for time-series elements
+      cursor: >-
+        uint64 `cursor` on AnnotatedDeviceState. Stable, unique, opaque and ordered — see
+        conventions/ pagination.
+  - name: Swift Binary Protocol
+    source: spec/*.yaml
+    shape: >-
+      Not an entity graph. SBP is a flat catalog of 242 message types across 29 packages, each with a
+      fixed binary field layout and a 16-bit type id. Composition happens through shared structs
+      (types.yaml, gnss.yaml) that messages include, not through references between messages.
+    packages: 29
+    definitions: 322
+    messages: 242
+    shared_structs:
+      - {name: GpsTime, package: swiftnav.sbp.gnss}
+      - {name: GnssSignal, package: swiftnav.sbp.gnss}
+      - {name: CarrierPhase, package: swiftnav.sbp.gnss}
+      - {name: Doppler, package: swiftnav.sbp.gnss}
+      - {name: SvId, package: swiftnav.sbp.gnss}
+    domain_groups:
+      navigation: Position, velocity, baseline and time solutions (the messages a consumer actually reads).
+      observation: Raw observations, ephemerides, almanacs.
+      ssr: State Space Representation corrections — the payload Skylark SSR mountpoints carry.
+      integrity: Protection levels, error bounds, SSR integrity flags.
+      signing: ECDSA and AES-CMAC message authentication for corrections.
+      imu / orientation / mag / vehicle: Inertial, attitude, magnetometer and wheel-odometry inputs.
+      piksi / linux / settings / flash / file_io / bootload: Device management and firmware surfaces.
+    framing:
+      header_bytes: 6
+      crc: CCITT CRC16 (XMODEM)
+      payload: variable
+      json_form: SBP-JSON, schema'd in json-schema/ (225 draft-06 documents)

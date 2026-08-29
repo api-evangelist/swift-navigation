@@ -1,0 +1,23 @@
+generated: '2026-08-29'
+method: generated
+source: >-
+  Authored by API Evangelist from the artifacts in this repository. Swift Navigation publishes no
+  Agent Skills and no AGENTS.md — https://github.com/swift-nav was searched and neither exists.
+name: Swift Navigation agent skills
+note: >-
+  Both skills are grounded strictly in things that were verified: probed HTTP 200 responses saved in
+  examples/, and message names read out of the 29 published SBP spec files. No operation, mountpoint
+  or message name appears in either skill that is not present in a saved artifact. Neither skill
+  touches a write surface, because every documented Swift Navigation write path is either
+  irreversible (device deletion, credential rotation, firmware flash) or unreachable (Sora).
+skills:
+  - name: consume-skylark-corrections
+    file: swift-navigation-consume-skylark-corrections.md
+    api: Skylark Precise Positioning Service
+    surface: NTRIP over HTTP
+    writes: false
+  - name: decode-sbp-stream
+    file: swift-navigation-decode-sbp-stream.md
+    api: Swift Binary Protocol (SBP)
+    surface: binary serial / TCP
+    writes: false

@@ -1,0 +1,212 @@
+# Copyright (C) 2015-2024 Swift Navigation Inc.
+# Contact: https://support.swiftnav.com
+#
+# This source is subject to the license found in the file 'LICENSE' which must
+# be distributed together with this source. All other rights reserved.
+#
+# THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+# EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+
+package: swiftnav.sbp.profiling
+description: Standardized profiling messages from Swift Navigation devices.
+stable: False
+public: False
+include:
+  - types.yaml
+definitions:
+
+ - MSG_MEASUREMENT_POINT:
+    id: 0xCF00
+    short_desc: Profiling Measurement Point
+    desc: >
+      Tracks execution time of certain code paths in specially built products.
+      This message should only be expected and processed on the direction of Swift's
+      engineering teams.
+    fields:
+      - total_time:
+          type: u32
+          desc: Total time spent in measurement point (microseconds)
+      - num_executions:
+          type: u16
+          desc: Number of times measurement point has executed
+      - min:
+          type: u32
+          desc: Minimum execution time (microseconds)
+      - max:
+          type: u32
+          desc: Maximum execution time (microseconds)
+      - return_addr:
+          type: u64
+          desc: Return address
+      - id:
+          type: u64
+          desc: Unique ID
+      - slice_time:
+          type: u64
+          desc: CPU slice time (milliseconds)
+      - line:
+          type: u16
+          desc: Line number
+      - func:
+          type: string
+          encoding: null_terminated
+          desc: Function name
+
+ - MSG_PROFILING_SYSTEM_INFO:
+    id: 0xCF01
+    short_desc: System Profiling Information
+    desc: >
+      Contains basic information about system resource usage.
+      System is defined in terms of the source of this message and may vary from
+      sender to sender. Refer to product documentation to understand the exact scope
+      and meaning of this message.
+    fields:
+      - total_cpu_time:
+          type: u64
+          desc: Total cpu time in microseconds consumed by this system
+      - age:
+          type: u64
+          desc: Age of the producing system in microseconds
+      - n_threads:
+          type: u8
+          desc: Number of threads being tracked by this system
+      - heap_usage:
+          type: u32
+          desc: Number of bytes allocated on the heap
+
+ - MSG_PROFILING_THREAD_INFO:
+    id: 0xCF02
+    short_desc: Thread Profiling Information
+    desc: >
+      Contains profiling information related to a single thread being tracked by
+      the producing system. Refer to product documentation to understand the exact scope
+      and meaning of this message.
+    fields:
+      - total_cpu_time:
+          type: u64
+          desc: Total cpu time in microseconds consumed by this thread
+      - age:
+          type: u64
+          desc: Age of the thread in microseconds
+      - state:
+          type: u8
+          desc: Thread state
+          fields:
+            - 0-1:
+                desc: Thread state
+                values:
+                  - 0: External
+                  - 1: Running
+                  - 2: Stopped
+                  - 3: Reserved
+      - stack_size:
+          type: u32
+          desc: Stack size in bytes
+      - stack_usage:
+          type: u32
+          desc: Stack high water usage in bytes
+      - name:
+          type: string
+          encoding: null_terminated
+          desc: Thread name
+
+ - ResourceBucket:
+    short_desc: A bucket containing various resources
+    desc: >
+      Information about allocation of various resources grouped by buckets. Refer to product
+      documentation to understand the meaning and values in this message.
+    fields:
+      - name:
+          type: string
+          encoding: null_terminated
+          size: 21
+          desc: Bucket name
+      - thread:
+          type: u8
+          desc: Number of threads
+      - mutex:
+          type: u8
+          desc: Number of mutexes
+      - cv:
+          type: u8
+          desc: Number of condition variables
+      - io:
+          type: u8
+          desc: Number of IO handles
+      - heap_bytes_alloc:
+          type: u32
+          desc: Number of bytes allocated on the heap
+      - heap_bytes_free:
+          type: u32
+          desc: Number of bytes freed on the heap
+      - io_write:
+          type: u32
+          desc: Number of bytes written to IO handles
+      - io_read:
+          type: u32
+          desc: Number of bytes read from IO handles
+
+
+ - MSG_PROFILING_RESOURCE_COUNTER:
+    id: 0xCF03
+    short_desc: Information about resource buckets
+    desc: >
+      Information about resource buckets. Refer to product documentation to understand
+      the meaning and values in this message.
+    fields:
+      - seq_no:
+          type: u8
+          desc: Message number in complete sequence
+      - seq_len:
+          type: u8
+          desc: Length of message sequence
+      - buckets:
+          type: array
+          fill: ResourceBucket
+          desc: List of resource buckets
+
+ - QueueInfo:
+    short_desc: Stats for a single message queue type
+    desc: >
+      Profiling information for a single swiftlet internal message queue type.
+    fields:
+      - timestamp:
+          type: u64
+          desc: Timestamp in milliseconds
+      - name:
+          type: string
+          encoding: null_terminated
+          size: 40
+          desc: Queue type name
+      - size:
+          type: u16
+          desc: Total number of slots in the queue
+      - current_fill:
+          type: u16
+          desc: Number of slots currently in use
+      - peak_fill:
+          type: u16
+          desc: Peak number of slots used since init
+      - drop_count:
+          type: u16
+          desc: Number of messages dropped since init
+
+ - MSG_PROFILING_QUEUE_INFO:
+    id: 0xCF04
+    short_desc: Messaging Queue Profiling Information
+    desc: >
+      Contains profiling information for swiftlet internal message queues.
+      Refer to product documentation to understand the meaning and values
+      in this message.
+    fields:
+      - seq_no:
+          type: u8
+          desc: Message number in complete sequence
+      - seq_len:
+          type: u8
+          desc: Length of message sequence
+      - queues:
+          type: array
+          fill: QueueInfo
+          desc: List of queue stats

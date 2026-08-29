@@ -1,0 +1,436 @@
+syntax = "proto3";
+
+package sora.app.v1beta;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "sora/app/v1beta/types.proto";
+import "sora/v1beta/common.proto";
+
+option optimize_for = LITE_RUNTIME;
+
+// Server <-> Application API
+service AppService {
+  rpc StreamState(StreamStateRequest) returns (stream StreamStateResponse) {}
+  rpc StreamEvents(StreamEventsRequest) returns (stream StreamEventsResponse) {}
+  rpc QueryState(QueryStateRequest) returns (QueryStateResponse) {}
+  rpc QueryEvents(QueryEventsRequest) returns (QueryEventsResponse) {}
+  rpc QueryStateAggregate(QueryStateAggregateRequest) returns (QueryStateAggregateResponse) {}
+
+  rpc ReadLayers(ReadLayersRequest) returns (ReadLayersResponse) {}
+  rpc CreateLayer(CreateLayerRequest) returns (CreateLayerResponse) {}
+  rpc UpdateLayer(UpdateLayerRequest) returns (UpdateLayerResponse) {}
+  rpc DeleteLayer(DeleteLayerRequest) returns (DeleteLayerResponse) {}
+
+  rpc ReadEventGenerators(ReadEventGeneratorsRequest) returns (ReadEventGeneratorsResponse) {}
+  rpc CreateEventGenerator(CreateEventGeneratorRequest) returns (CreateEventGeneratorResponse) {}
+  rpc UpdateEventGenerator(UpdateEventGeneratorRequest) returns (UpdateEventGeneratorResponse) {}
+  rpc DeleteEventGenerator(DeleteEventGeneratorRequest) returns (DeleteEventGeneratorResponse) {}
+
+  rpc ReadAlertors(ReadAlertorsRequest) returns (ReadAlertorsResponse) {}
+  rpc CreateAlertor(CreateAlertorRequest) returns (CreateAlertorResponse) {}
+  rpc UpdateAlertor(UpdateAlertorRequest) returns (UpdateAlertorResponse) {}
+  rpc DeleteAlertor(DeleteAlertorRequest) returns (DeleteAlertorResponse) {}
+
+  rpc ReadAnnotators(ReadAnnotatorsRequest) returns (ReadAnnotatorsResponse) {}
+  rpc CreateAnnotator(CreateAnnotatorRequest) returns (CreateAnnotatorResponse) {}
+  rpc UpdateAnnotator(UpdateAnnotatorRequest) returns (UpdateAnnotatorResponse) {}
+  rpc DeleteAnnotator(DeleteAnnotatorRequest) returns (DeleteAnnotatorResponse) {}
+
+  rpc ReadProjects(ReadProjectsRequest) returns (ReadProjectsResponse) {}
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {}
+  rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {}
+
+  rpc ReadDevices(ReadDevicesRequest) returns (ReadDevicesResponse) {}
+  rpc CreateDevice(CreateDeviceRequest) returns (CreateDeviceResponse) {}
+  rpc UpdateDevice(UpdateDeviceRequest) returns (UpdateDeviceResponse) {}
+  rpc DeleteDevice(DeleteDeviceRequest) returns (DeleteDeviceResponse) {}
+}
+
+message ReadDevicesRequest {
+  string project_id = 1;
+}
+message ReadDevicesResponse {
+  repeated Device devices = 1;
+}
+
+message CreateDeviceRequest {
+  Device device = 1;
+  // In the Device Authentication Flow we use, state is use to verify that the data
+  // sent and receieved via a redirect is not replayed.
+  string state = 2;
+}
+message CreateDeviceResponse {
+  Device device = 1;
+  // The wrapped_device_access_token is a JWT signed by a the AppService
+  // It will be sent to an Auth Service which will send it to the device in
+  // the final stage of the a Device Authorization Flow.
+  // It will contain a claim, `device_accesss_token`, which is to passed to the
+  // device by the Auth Service, and a claim `state` which was the state. sent
+  // by the Auth Service when it redirected to the Create Device page.
+  //
+  // The wrapping of the tokens is to allow:
+  // a. the Auth Service to verify that the outer token originated from the AppService
+  // b. the DeviceService, on recieving the inner token from the device, to verify
+  //    that that it also originated from the AppService.
+  // Secrets will need to be shared between these services to achieve this,
+  // and it is not advisable for the same secret to be used in both cases.
+  string wrapped_device_access_token = 2;
+}
+
+message UpdateDeviceRequest {
+  Device device = 1;
+}
+message UpdateDeviceResponse {
+  Device device = 1;
+}
+
+message DeleteDeviceRequest {
+  string id = 1;
+  string project_id = 2;
+}
+message DeleteDeviceResponse {}
+
+message ReadProjectsRequest {}
+message ReadProjectsResponse {
+  repeated Project projects = 1;
+}
+
+message CreateProjectRequest {
+  Project project = 1;
+}
+message CreateProjectResponse {
+  Project project = 1;
+}
+
+message UpdateProjectRequest {
+  Project project = 1;
+}
+message UpdateProjectResponse {
+  Project project = 1;
+}
+
+message DeleteProjectRequest {
+  string id = 1;
+}
+message DeleteProjectResponse {}
+
+message ReadAnnotatorsRequest {
+  string project_id = 1;
+}
+message ReadAnnotatorsResponse {
+  repeated Annotator annotators = 1;
+}
+
+message CreateAnnotatorRequest {
+  Annotator annotator = 1;
+}
+message CreateAnnotatorResponse {
+  Annotator annotator = 1;
+}
+
+message UpdateAnnotatorRequest {
+  Annotator annotator = 1;
+}
+message UpdateAnnotatorResponse {
+  Annotator annotator = 1;
+}
+
+message DeleteAnnotatorRequest {
+  string id = 1;
+  string project_id = 2;
+}
+message DeleteAnnotatorResponse {}
+
+message ReadAlertorsRequest {
+  string project_id = 1;
+}
+message ReadAlertorsResponse {
+  repeated Alertor alertors = 1;
+}
+
+message CreateAlertorRequest {
+  Alertor alertor = 1;
+}
+message CreateAlertorResponse {
+  Alertor alertor = 1;
+}
+
+message UpdateAlertorRequest {
+  Alertor alertor = 1;
+}
+message UpdateAlertorResponse {
+  Alertor alertor = 1;
+}
+
+message DeleteAlertorRequest {
+  string id = 1;
+  string project_id = 2;
+}
+message DeleteAlertorResponse {}
+
+message ReadEventGeneratorsRequest {
+  string project_id = 1;
+}
+message ReadEventGeneratorsResponse {
+  repeated EventGenerator event_generators = 1;
+}
+
+message CreateEventGeneratorRequest {
+  EventGenerator event_generator = 1;
+}
+message CreateEventGeneratorResponse {
+  EventGenerator event_generator = 1;
+}
+
+message UpdateEventGeneratorRequest {
+  EventGenerator event_generator = 1;
+}
+message UpdateEventGeneratorResponse {
+  EventGenerator event_generator = 1;
+}
+
+message DeleteEventGeneratorRequest {
+  string id = 1;
+  string project_id = 2;
+}
+message DeleteEventGeneratorResponse {}
+
+message ReadLayersRequest {
+  string project_id = 1;
+}
+message ReadLayersResponse {
+  repeated Layer layers = 1;
+}
+
+message CreateLayerRequest {
+  Layer layer = 1;
+}
+message CreateLayerResponse {
+  Layer layer = 1;
+}
+
+message UpdateLayerRequest {
+  Layer layer = 1;
+}
+message UpdateLayerResponse {
+  Layer layer = 1;
+}
+
+message DeleteLayerRequest {
+  string id = 1;
+  string project_id = 2;
+}
+message DeleteLayerResponse {}
+
+message DeviceSelection {
+  repeated string uuids = 1;
+}
+
+// # Time Series Model
+//
+//     1 - 2 - 3 - 4 -
+//     ^
+//     element
+//
+// In Sora a time series consists of a series of elements in time order. A time
+// series is immutable and append only. A time series may be appended in
+// real-time. Each time series element has a corresponding timestamp.
+//
+// ## Timestamps
+//
+// Timestamps are represented according to the `protobuf` Timestamp specification:
+//
+// https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#timestamp
+//
+// TODO - detail handling of leap seconds and relationship with GPS time.
+//
+// ## Time Series Cursors
+//
+//     1 - 2 - 3 - 4 -
+//         ^
+//         cursor - points to a specific element
+//
+// A core concept in the Sora API is that of a time series cursor. A cursor
+// provides a stable pointer into a time series. Cursors have the following
+// properties:
+//
+//  - **Stable** - a cursor will always represent the same position in the time
+//    series.
+//  - **Unique** - even if the time series contains multiple elements with the
+//    same timestamp, the cursor is guaranteed to reference the same element in
+//    the time series.
+//  - **Opaque** - only cursors supplied by the API should be used. It is not
+//    permitted to modify the cursor by e.g. adding or subtracting from it. The
+//    cursors are not guaranteed to be sequential and should not be considered an
+//    index.
+//  - **Ordered** - it is permitted to compare two cursors and the greater value
+//    corresponds to a later time in the time series.
+//
+// ## Time Series Queries
+//
+// A time series query includes a time range selection. The time range selection
+// is specified by a start and an end of the range. The start and end may be
+// specified in three ways:
+//
+//  - **No start / end** - the range runs from or to the beginning or end of the
+//    available data
+//  - **Time** - the range runs bewteen the specified timestamps, inclusive of those
+//    timestamps
+//  - **Cursor** - the time range runs bewteen the specified cursors **exclusive**
+//    of the elements referred to by those cursors
+//
+// In addition, when providing an **No start / end** or a **Time** range, an end cursor
+// may be additionally supplied. This acts to further restrict the initial range, and is
+// useful for paging.
+//
+// Example:
+//
+//     1 - 2 - 3 - 4 - 5 - 6 - 7 -
+//         ^               ^  ^
+//         |               |  end timestamp - may or may not be an element at that timestamp
+//         |               |
+//         |               end cursor - points to element 6
+//         start timestamp - points to the time of element 2
+//
+//         2 - 3 - 4 - 5
+//             query returns these elements
+//
+// ## Continuations and Paginations
+//
+// A time series query is not guaranteed to return all the elements in its
+// response. The number of elements returned may be limited by the request or the
+// server. If the request does not include all the elements available in the query
+// range then the response will include a **continuation**.
+//
+// A continuation specifies a new query time range selection that may be queried
+// to return the remainder of the results. The continuation query may in turn
+// specify a continuation so to return the complete set of results the
+// continuations must be queried recursively.
+//
+// ## Query Results
+//
+// Each individual query has its elements included in ascending time. However, the order
+// of the continuations themselves are not fixed. Currently they are returned in descending
+// order, but we don't guarantee this.
+//
+// ## Start and End Cursors
+//
+// A query response will also include start and end cursors. These point to the
+// first and last elements included in the response. To construct a new query that
+// is guaranteed to return all elements up to the start or from the end of the
+// previous query, these start and end cursors may be used. This usage is
+// recommended to ensure no elements are missed when resuming querying a time
+// series from where you left off, either in a forwards or backwards direction.
+//
+//     Query A:
+//     1 - 2 - 3 - 4 - 5 - 6 - 7 -
+//           ^            ^
+//           |            end timestamp
+//           start timestamp
+//
+//     Query A returns these elements and cursors:
+//             3 - 4 - 5
+//             ^       ^
+//             |       end cursor
+//             start Cursor
+//
+//     Query B:
+//     1 - 2 - 3 - 4 - 5 - 6 - 7 -
+//           ^         ^         ^
+//           |         |         end timestamp
+//           |         start cursor = end cursor of Query A
+//           start timestamp
+//
+//     Query B returns these elements and cursors:
+//                         6 - 7
+//                         ^   ^
+//                         |   end cursor
+//                         start cursor
+message TimeSeriesRangeSelection {
+  optional google.protobuf.Timestamp start_time = 1;
+  optional uint64 start_cursor = 2;
+
+  optional google.protobuf.Timestamp end_time = 3;
+  optional uint64 end_cursor = 4;
+}
+
+message StreamStateRequest {
+  DeviceSelection device = 1;
+  string project_id = 2;
+}
+message StreamStateResponse {
+  repeated sora.v1beta.AnnotatedDeviceState states = 1;
+  uint64 from_cursor = 2;
+  uint64 start_cursor = 3;
+  uint64 end_cursor = 4;
+}
+
+message StreamEventsRequest {
+  DeviceSelection device = 1;
+  string project_id = 2;
+}
+message StreamEventsResponse {
+  repeated sora.v1beta.Event events = 1;
+  uint64 from_cursor = 2;
+  uint64 start_cursor = 3;
+  uint64 end_cursor = 4;
+}
+
+message QueryStateRequest {
+  DeviceSelection devices = 1;
+  TimeSeriesRangeSelection range = 2;
+  uint32 limit = 3;
+  string project_id = 4;
+}
+message QueryStateResponse {
+  map<string, sora.v1beta.AnnotatedDeviceStates> grouped_states = 1;
+  oneof continuation {
+    google.protobuf.NullValue done = 2;
+    TimeSeriesRangeSelection cont = 3;
+  }
+  uint64 start_cursor = 4;
+  uint64 end_cursor = 5;
+}
+
+message QueryEventsRequest {
+  DeviceSelection devices = 1;
+  TimeSeriesRangeSelection range = 2;
+  uint32 limit = 3;
+  string project_id = 4;
+}
+message QueryEventsResponse {
+  repeated sora.v1beta.Event events = 1;
+  oneof continuation {
+    google.protobuf.NullValue done = 2;
+    TimeSeriesRangeSelection cont = 3;
+  }
+  uint64 start_cursor = 4;
+  uint64 end_cursor = 5;
+}
+
+message QueryStateAggregateRequest {
+  message MonthRange {
+    int32 year = 1;
+    int32 month = 2;
+    string timezone = 3;
+  }
+
+  string project_id = 1;
+  oneof range {
+    MonthRange month = 2;
+  }
+}
+message QueryStateAggregateResponse {
+  message Date {
+    int32 year = 1;
+    int32 month = 2;
+    int32 day = 3;
+  }
+  message CountEntry {
+    Date date = 1;
+    int32 count = 2;
+  }
+  repeated CountEntry counts = 1;
+}

@@ -1,0 +1,77 @@
+generated: '2026-08-29'
+method: searched
+source: >-
+  https://github.com/swift-nav/libsbp#installing-sbp2json-json2sbp-json2json-and-related-tools ;
+  https://github.com/swift-nav/sora-device-client ; https://github.com/swift-nav/swift-toolbox ;
+  https://github.com/swift-nav/piksi_tools
+name: Swift Navigation command-line tooling
+tools:
+  - name: sbp2json
+    purpose: Convert an SBP binary stream to expanded JSON, one object per message.
+    official: true
+    languages: [rust, haskell, python]
+    install:
+      - method: release-archive
+        command: Download from https://github.com/swift-nav/libsbp/releases
+      - method: cargo
+        command: cargo install --git https://github.com/swift-nav/libsbp.git --bins
+      - method: pip
+        command: pip3 install sbp
+        invoke: python3 -m sbp2json <sbp.bin
+        note: >-
+          Provider states plainly that the Python build is significantly slower than the Rust and
+          Haskell builds, and offers it for platform coverage rather than throughput.
+  - name: json2sbp
+    purpose: Reconstruct SBP binary framing from an SBP-JSON stream.
+    official: true
+    languages: [rust, haskell]
+  - name: json2json
+    purpose: >-
+      Expand the abbreviated JSON the Swift Console writes (common fields only) into full per-message
+      JSON objects.
+    official: true
+    languages: [rust, haskell]
+  - name: sbp2yaml
+    purpose: SBP binary to YAML.
+    official: true
+    languages: [haskell]
+    note: Haskell build only; predates the Rust and Python tools.
+  - name: sbp2prettyjson
+    purpose: SBP binary to indented JSON.
+    official: true
+    languages: [haskell]
+  - name: sora
+    purpose: Stream a GNSS device's location into Sora.
+    official: true
+    languages: [python]
+    install:
+      - method: pip
+        command: pip install sora-device-client
+    commands:
+      - {name: login, purpose: 'Interactive OAuth 2.0 device authorization flow; requires a browser.'}
+      - {name: logout, purpose: Clear stored credentials.}
+      - {name: start, purpose: Stream device state to the Sora server.}
+      - {name: paths, purpose: Print the configuration and data directories the client uses.}
+      - {name: example-config, purpose: Emit a commented example config.toml.}
+    configuration:
+      format: TOML
+      location: platform config dir (printed by `sora paths`)
+      drivers: [tcp, serial]
+      formats: [sbp, nmea]
+      default_server: https://grpc.sora.swiftnav.com
+    status: >-
+      Unusable in practice — the default server presents a placeholder Kubernetes ingress
+      certificate. See lifecycle/.
+  - name: swift-toolbox (Swift Console)
+    purpose: >-
+      Desktop GUI plus CLI for interacting with Swift hardware over SBP — solution view, observation
+      view, settings, firmware update, logging.
+    official: true
+    languages: [rust, python]
+    repo: https://github.com/swift-nav/swift-toolbox
+    note: GUI-first; the console is the reference SBP consumer.
+  - name: piksi_tools
+    purpose: Command-line utilities for the Piksi GNSS receiver (bootloader, settings, serial link).
+    official: true
+    languages: [python]
+    repo: https://github.com/swift-nav/piksi_tools

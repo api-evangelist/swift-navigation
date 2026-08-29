@@ -1,0 +1,178 @@
+# Copyright (C) 2016-2021 Swift Navigation Inc.
+# Contact: https://support.swiftnav.com
+#
+# This source is subject to the license found in the file 'LICENSE' which must
+# be distributed together with this source. All other rights reserved.
+#
+# THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+# EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+
+package: swiftnav.sbp.imu
+description: Inertial Measurement Unit (IMU) messages.
+stable: True
+public: True
+include:
+  - types.yaml
+definitions:
+
+ - MSG_IMU_RAW:
+    id: 0x0900
+    short_desc: Raw IMU data
+    desc: >
+      Raw data from the Inertial Measurement Unit, containing accelerometer and
+      gyroscope readings. The sense of the measurements are to be aligned with
+      the indications on the device itself. Measurement units, which are
+      specific to the device hardware and settings, are communicated via the
+      MSG_IMU_AUX message. If using "time since startup" local time tags, the
+      receiving end will expect either a MSG_GNSS_TIME_OFFSET or MSG_PPS_TIME
+      to establish the relationship between IMU time and GNSS time.
+      
+      Regardless of the timestamping mode, the timestamp is required to roll
+      over to zero when reaching one week (604800 seconds, or 604800000 milliseconds).
+
+      The time-tagging mode should not change throughout a run.
+    fields:
+        - tow:
+            type: u32
+            fields:
+              - 30-31:
+                  desc: Time status
+                  values:
+                      - 0: Reference epoch is start of current GPS week
+                      - 1: Reference epoch is time of system startup
+                      - 2: Reference epoch is unknown
+                      - 3: Reference epoch is last PPS
+              - 0-29:
+                  desc: Time since reference epoch in milliseconds
+            desc: >
+              Milliseconds since reference epoch and time status.
+        - tow_f:
+            type: u8
+            units: ms / 256
+            desc: >
+              Milliseconds since reference epoch, fractional part
+        - acc_x:
+            type: s16
+            desc: Acceleration in the IMU frame X axis
+        - acc_y:
+            type: s16
+            desc: Acceleration in the IMU frame Y axis
+        - acc_z:
+            type: s16
+            desc: Acceleration in the IMU frame Z axis
+        - gyr_x:
+            type: s16
+            desc: Angular rate around IMU frame X axis
+        - gyr_y:
+            type: s16
+            desc: Angular rate around IMU frame Y axis
+        - gyr_z:
+            type: s16
+            desc: Angular rate around IMU frame Z axis
+
+ - MSG_IMU_AUX:
+    id: 0x0901
+    short_desc: Auxiliary IMU data
+    desc: >
+      Auxiliary data specific to a particular IMU. The `imu_type` field will
+      always be consistent but the rest of the payload is device specific and
+      depends on the value of `imu_type`.
+    fields:
+        - imu_type:
+            type: u8
+            desc: IMU type
+            fields:
+              - 0-7:
+                  desc: IMU Type
+                  values:
+                      - 0: Bosch BMI160
+                      - 1: ST Microelectronics ASM330LLH
+                      - 3: TDK ICM-42670
+                      - 4: Murata SCHA634-D03
+                      - 5: TDK IAM-20680HP
+        - temp:
+            type: s16
+            desc: Raw IMU temperature
+        - imu_conf:
+            type: u8
+            desc: IMU configuration
+            fields:
+              - 4-7:
+                  desc: Gyroscope Range
+                  values:
+                      - 0: +/- 2000 deg / s
+                      - 1: +/- 1000 deg / s
+                      - 2: +/- 500 deg / s
+                      - 3: +/- 250 deg / s
+                      - 4: +/- 125 deg / s
+                      - 5: +/- 300 deg / s
+              - 0-3:
+                  desc: Accelerometer Range
+                  values:
+                      - 0: +/- 2g
+                      - 1: +/- 4g
+                      - 2: +/- 8g
+                      - 3: +/- 16g
+                      - 4: +/- 6g
+
+ - MSG_IMU_COMP:
+    id: 0x0905
+    short_desc: Compensated IMU data
+    desc: >
+      Data from the Inertial Measurement Unit, containing accelerometer and
+      gyroscope readings compensated for estimated errors and constant 
+      physical effects. The output is valid for inertially referenced center 
+      of navigation (IMU body frame) represented in vehicle body frame.
+    fields:
+        - time:
+            type: u64
+            units: microseconds
+            desc: Microseconds since reference epoch
+        - flags:
+            type: u16
+            desc: Contains the applied compensation parameters and time synchronization mode
+            fields:
+              - 7-15: 
+                  desc: Reserved     
+              - 6: 
+                  desc: Gyroscope-errors-compensated      
+              - 5: 
+                  desc: Accelerometer-errors-compensated      
+              - 4: 
+                  desc: Coriolis-effect-compensated     
+              - 3: 
+                  desc: Earth-roration-rate-compensated     
+              - 2: 
+                  desc: Earth-gravity-compensated  
+              - 0-1:
+                  desc: Time status
+                  values:
+                    - 0: Reference epoch is start of current GPS week
+                    - 1: Reference epoch is time of system startup
+                    - 2: Reference epoch is unknown
+                    - 3: Reference epoch is last PPS  
+        - acc_comp_x:
+            type: s32
+            units: 1e-6 m/s^2
+            desc: Compensated acceleration X axis
+        - acc_comp_y:
+            type: s32
+            units: 1e-6 m/s^2
+            desc: Compensated acceleration Y axis
+        - acc_comp_z:
+            type: s32
+            units: 1e-6 m/s^2
+            desc: Compensated acceleration Z axis
+        - gyr_comp_x:
+            type: s32
+            units: 1e-6 deg/s
+            desc: Compensated angular rate X axis
+        - gyr_comp_y:
+            type: s32
+            units: 1e-6 deg/s
+            desc: Compensated angular rate Y axis
+        - gyr_comp_z:
+            type: s32
+            units: 1e-6 deg/s
+            desc: Compensated angular rate Z axis                      

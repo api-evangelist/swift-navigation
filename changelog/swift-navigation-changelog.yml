@@ -1,0 +1,64 @@
+generated: '2026-08-29'
+method: searched
+source: >-
+  https://github.com/swift-nav/libsbp/blob/master/CHANGELOG.md ;
+  https://api.github.com/repos/swift-nav/libsbp/releases
+name: Swift Binary Protocol (libsbp) change log
+note: >-
+  This is the only dated, public, per-release change log Swift Navigation publishes for anything an
+  integrator consumes. There is no Skylark change log — Skylark changes surface as undated knowledge
+  base articles — and no Sora change log. The libsbp CHANGELOG is auto-generated from merged pull
+  requests, so it is complete but not curated: protocol additions sit in the same flat list as
+  dependabot bumps, and there is no "breaking changes" section.
+scheme: semver
+current_version: v6.5.1
+current_released: '2026-07-08'
+url: https://github.com/swift-nav/libsbp/blob/master/CHANGELOG.md
+releases_url: https://github.com/swift-nav/libsbp/releases
+breaking_change_marking: false
+entries:
+  - version: v6.5.1
+    date: '2026-07-08'
+    breaking: false
+    additions: []
+    highlights:
+      - Python 3.12 support (issue 1583)
+      - Modernize Python environment
+      - Migrate to rules_rs, modernize Rust toolchain/deps, Bazel 9.1.1
+  - version: v6.5.0
+    date: '2026-05-13'
+    breaking: false
+    additions:
+      - MSG_ORIENT_QUAT_COV — attitude quaternion with full 3x3 covariance
+    highlights:
+      - Spelling fixes to unblock release
+      - Remove auto-generated directories from CODEOWNERS
+  - version: v6.4.0
+    date: '2026-04-15'
+    breaking: false
+    additions:
+      - MessagingQueue subsystem
+      - MSG_PROFILING_QUEUE_INFO
+    highlights:
+      - HOWTO updated
+  - version: v6.3.3
+    date: '2026-03-18'
+    breaking: false
+    additions: []
+    highlights:
+      - Fix json2sbp errors on block-buffered pipe input
+      - Remove WORKSPACE files, update Bazel build
+      - sbp2json exposed as a bazel target
+  - version: v6.3.2
+    date: '2025-11-11'
+    breaking: false
+  - version: v6.3.1
+    date: '2025-10-28'
+    breaking: false
+  - version: v6.3.0
+    date: '2025-09-16'
+    breaking: false
+  - version: v6.2.2
+    date: '2025-08-07'
+    breaking: false
+    note: Ended a 10-month release gap after v6.2.1 (2024-10-22).

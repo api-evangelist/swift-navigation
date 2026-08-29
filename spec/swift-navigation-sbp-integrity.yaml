@@ -1,0 +1,506 @@
+# Copyright (C) 2018-2022 Swift Navigation Inc.
+# Contact: https://support.swiftnav.com
+#
+# This source is subject to the license found in the file 'LICENSE' which must
+# be distributed together with this source. All other rights reserved.
+#
+# THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+# EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+
+package: swiftnav.sbp.integrity
+description: Integrity flag messages
+stable: False
+public: True
+include:
+  - types.yaml
+  - gnss.yaml
+definitions:
+  - IntegritySSRHeader:
+      short_desc: Common fields for SSR integrity messages
+      fields:
+        - obs_time:
+            type: GPSTimeSec
+            desc: GNSS reference time of the observation used to generate the flag.
+        - num_msgs:
+            type: u8
+            desc: Number of messages in the dataset
+        - seq_num:
+            type: u8
+            desc: Position of this message in the dataset
+        - ssr_sol_id:
+            type: u8
+            desc: SSR Solution ID.
+        - tile_set_id:
+            type: u16
+            desc: Unique identifier of the set this tile belongs to.
+        - tile_id:
+            type: u16
+            desc: Unique identifier of this tile in the tile set.
+        - chain_id:
+            type: u8
+            desc: Chain and type of flag.
+
+  - MSG_SSR_FLAG_HIGH_LEVEL_DEP_A:
+      id: 0x0BB9
+      short_desc: Deprecated
+      desc: Deprecated.
+      public: false
+      replaced_by:
+        - MSG_SSR_FLAG_HIGH_LEVEL
+      fields:
+        - obs_time:
+            type: GPSTimeSec
+            desc: GNSS reference time of the observation used to generate the flag.
+        - corr_time:
+            type: GPSTimeSec
+            desc: GNSS reference time of the correction associated to the flag.
+        - ssr_sol_id:
+            type: u8
+            desc: SSR Solution ID.
+        - tile_set_id:
+            type: u16
+            desc: Unique identifier of the set this tile belongs to.
+        - tile_id:
+            type: u16
+            desc: Unique identifier of this tile in the tile set.
+        - chain_id:
+            type: u8
+            desc: Chain and type of flag.
+        - use_gps_sat:
+            type: u8
+            desc: Use GPS satellites.
+            fields:
+              - 0-2:
+                  desc: Use GPS satellites.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - use_gal_sat:
+            type: u8
+            desc: Use GAL satellites.
+            fields:
+              - 0-2:
+                  desc: Use GAL satellites.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - use_bds_sat:
+            type: u8
+            desc: Use BDS satellites.
+            fields:
+              - 0-2:
+                  desc: Use BDS satellites.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - use_qzss_sat:
+            type: u8
+            desc: Use QZSS satellites.
+            fields:
+              - 0-2:
+                  desc: Use QZSS satellites.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - reserved:
+            type: array
+            size: 5
+            fill: u8
+            desc: Reserved
+        - use_tropo_grid_points:
+            type: u8
+            desc: Use tropo grid points.
+            fields:
+              - 0-2:
+                  desc: Use tropo grid points.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - use_iono_grid_points:
+            type: u8
+            desc: Use iono grid points.
+            fields:
+              - 0-2:
+                  desc: Use iono grid points.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - use_iono_tile_sat_los:
+            type: u8
+            desc: Use iono tile satellite LoS.
+            fields:
+              - 0-2:
+                  desc: Use iono tile satellite LoS.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - use_iono_grid_point_sat_los:
+            type: u8
+            desc: Use iono grid point satellite LoS.
+            fields:
+              - 0-2:
+                  desc: Use iono grid point satellite LoS.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+
+  - MSG_SSR_FLAG_HIGH_LEVEL:
+      id: 0x0BBA
+      short_desc: High level integrity flags
+      desc: >
+        Integrity monitoring flags for multiple aggregated elements.
+        An element could be a satellite, SSR grid point, or SSR tile.
+        A group of aggregated elements being monitored for integrity could refer to:
+
+
+        - Satellites in a particular {GPS, GAL, BDS, QZSS} constellation.
+
+
+        - Satellites in the line-of-sight of a particular SSR tile.
+
+
+        - Satellites in the line-of-sight of a particular SSR grid point.
+
+
+        The integrity usage for a group of aggregated elements varies according to the
+        integrity flag of the satellites comprising that group.
+
+
+        SSR_INTEGRITY_USAGE_NOMINAL: All satellites received passed the integrity
+        check and have flag INTEGRITY_FLAG_OK.
+
+
+        SSR_INTEGRITY_USAGE_WARNING: A limited number of elements in the group
+        failed the integrity check. Refer to more granular integrity messages for
+        details on the specific failing elements.
+
+
+        SSR_INTEGRITY_USAGE_ALERT: Most elements in the group failed the integrity
+        check, do not use for positioning.
+
+
+        SSR_INTEGRITY_USAGE_NOT_MONITORED: Unable to verify the integrity flag of
+        elements in the group.
+      fields:
+        - obs_time:
+            type: GPSTimeSec
+            desc: GNSS reference time of the observation used to generate the flag.
+        - iono_corr_time:
+            type: GPSTimeSec
+            desc: GNSS reference time of the ionospheric correction associated to the flag.
+        - sat_corr_time:
+            type: GPSTimeSec
+            desc: GNSS reference time of the satellite correction associated to the flag.
+        - ssr_sol_id:
+            type: u8
+            desc: SSR Solution ID.
+        - tile_set_id:
+            type: u16
+            desc: Unique identifier of the set this tile belongs to.
+        - tile_id:
+            type: u16
+            desc: Unique identifier of this tile in the tile set.
+        - chain_id:
+            type: u8
+            desc: Chain and type of flag.
+        - use_gps_sat:
+            type: u8
+            desc: Use GPS satellites.
+            fields:
+              - 0-2:
+                  desc: Use GPS satellites.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - use_gal_sat:
+            type: u8
+            desc: Use GAL satellites.
+            fields:
+              - 0-2:
+                  desc: Use GAL satellites.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - use_bds_sat:
+            type: u8
+            desc: Use BDS satellites.
+            fields:
+              - 0-2:
+                  desc: Use BDS satellites.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - use_qzss_sat:
+            type: u8
+            desc: Use QZSS satellites.
+            fields:
+              - 0-2:
+                  desc: Use QZSS satellites.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - reserved:
+            type: array
+            size: 5
+            fill: u8
+            desc: Reserved
+        - use_tropo_grid_points:
+            type: u8
+            desc: Use tropo grid points.
+            fields:
+              - 0-2:
+                  desc: Use tropo grid points.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - use_iono_grid_points:
+            type: u8
+            desc: Use iono grid points.
+            fields:
+              - 0-2:
+                  desc: Use iono grid points.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - use_iono_tile_sat_los:
+            type: u8
+            desc: Use iono tile satellite LoS.
+            fields:
+              - 0-2:
+                  desc: Use iono tile satellite LoS.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+        - use_iono_grid_point_sat_los:
+            type: u8
+            desc: Use iono grid point satellite LoS.
+            fields:
+              - 0-2:
+                  desc: Use iono grid point satellite LoS.
+                  values:
+                    - 0: Nominal
+                    - 1: Warning
+                    - 2: Alert
+                    - 3: Not monitored
+
+  - MSG_SSR_FLAG_SATELLITES:
+      id: 0x0BBD
+      short_desc: List of satellites which are faulty, per constellation
+      fields:
+        - obs_time:
+            type: GPSTimeSec
+            desc: GNSS reference time of the observation used to generate the flag.
+        - num_msgs:
+            type: u8
+            desc: Number of messages in the dataset
+        - seq_num:
+            type: u8
+            desc: Position of this message in the dataset
+        - ssr_sol_id:
+            type: u8
+            desc: SSR Solution ID.
+        - chain_id:
+            type: u8
+            desc: Chain and type of flag.
+        - const_id:
+            type: u8
+            desc: Constellation ID.
+        - n_faulty_sats:
+            type: u8
+            desc: Number of faulty satellites.
+        - faulty_sats:
+            type: array
+            fill: u8
+            size_fn: n_faulty_sats
+            desc: List of faulty satellites.
+
+  - MSG_SSR_FLAG_TROPO_GRID_POINTS:
+      id: 0x0BC3
+      short_desc: List of grid points which are faulty
+      fields:
+        - header:
+            type: IntegritySSRHeader
+            desc: Header of an integrity message.
+        - n_faulty_points:
+            type: u8
+            desc: Number of faulty grid points.
+        - faulty_points:
+            type: array
+            fill: u16
+            size_fn: n_faulty_points
+            desc: List of faulty grid points.
+
+  - MSG_SSR_FLAG_IONO_GRID_POINTS:
+      id: 0x0BC7
+      short_desc: List of grid points which are faulty
+      fields:
+        - header:
+            type: IntegritySSRHeader
+            desc: Header of an integrity message.
+        - n_faulty_points:
+            type: u8
+            desc: Number of faulty grid points.
+        - faulty_points:
+            type: array
+            fill: u16
+            size_fn: n_faulty_points
+            desc: List of faulty grid points.
+
+  - MSG_SSR_FLAG_IONO_TILE_SAT_LOS:
+      id: 0x0BCD
+      short_desc: List of all the LOS which are faulty
+      fields:
+        - header:
+            type: IntegritySSRHeader
+            desc: Header of an integrity message.
+        - n_faulty_los:
+            type: u8
+            desc: Number of faulty LOS.
+        - faulty_los:
+            type: array
+            fill: SvId
+            size_fn: n_faulty_los
+            desc: List of faulty LOS
+
+  - MSG_SSR_FLAG_IONO_GRID_POINT_SAT_LOS:
+      id: 0x0BD1
+      short_desc: List of all the grid points to satellite which are faulty
+      fields:
+        - header:
+            type: IntegritySSRHeader
+            desc: Header of an integrity message.
+        - grid_point_id:
+            type: u16
+            desc: Index of the grid point.
+        - n_faulty_los:
+            type: u8
+            desc: Number of faulty LOS.
+        - faulty_los:
+            type: array
+            fill: SvId
+            size_fn: n_faulty_los
+            desc: List of faulty LOS
+
+  - MSG_ACKNOWLEDGE:
+      id: 0x0BD2
+      short_desc: Acknowledgement message in response to a request for corrections
+      fields:
+        - request_id:
+            type: u8
+            desc: Echo of the request ID field from the corresponding CRA message, or 255 if no request ID was provided.
+        - area_id:
+            type: u32
+            desc: Echo of the Area ID field from the corresponding CRA message.
+        - response_code:
+            type: u8
+            desc: Reported status of the request.
+            fields:
+              - 0-7:
+                  desc: Response code
+                  values:
+                    - 0: Ok
+                    - 1: Out of coverage
+                    - 2: Forbidden
+                    - 3: Invalid request
+                    - 4: Invalid area id
+        - correction_mask_on_demand:
+            type: u16
+            desc: >
+              Contains the message group(s) that will be sent in response from the corresponding CRA correction mask.
+              An echo of the correction mask field from the corresponding CRA message.
+            fields:
+              - 0:
+                  desc: Corrections certificate
+                  values:
+                    - 0: Not requested
+                    - 1: Requested
+              - 1:
+                  desc: Low rate messages
+                  values:
+                    - 0: Not requested
+                    - 1: Requested
+              - 2:
+                  desc: Ephemeris
+                  values:
+                    - 0: Not requested
+                    - 1: Requested
+              - 3:
+                  desc: Satellite clock
+                  values:
+                    - 0: Not requested
+                    - 1: Requested
+              - 4:
+                  desc: Satellite orbit
+                  values:
+                    - 0: Not requested
+                    - 1: Requested
+              - 5:
+                  desc: Satellite code bias
+                  values:
+                    - 0: Not requested
+                    - 1: Requested
+              - 6:
+                  desc: Satellite phase bias
+                  values:
+                    - 0: Not requested
+                    - 1: Requested
+              - 7:
+                  desc: Atmospherics
+                  values:
+                    - 0: Not requested
+                    - 1: Requested
+              - 8:
+                  desc: Integrity
+                  values:
+                    - 0: Not requested
+                    - 1: Requested
+              - 9:
+                  desc: Intermediate certificate
+                  values:
+                    - 0: Not requested
+                    - 1: Requested
+              - 10:
+                  desc: Certificate chain
+                  values:
+                    - 0: Not requested
+                    - 1: Requested
+              - 11-15:
+                  desc: Reserved
+
+        - correction_mask_stream:
+            type: u16
+            desc: For future expansion. Always set to 0.
+        - solution_id:
+            type: u8
+            desc: The solution ID of the instance providing the corrections.

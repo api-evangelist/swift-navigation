@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package sora.v1beta;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+option optimize_for = LITE_RUNTIME;
+
+// This gives the device position. Lat and Lon are degrees latitude and longitude,
+// assumed to be in the WGS 84 datum.
+// Alt is height in metres, assumed to be above the EGM2008 ellipsoid. If alt is omitted,
+// the device is interpreted as being at local ground level.
+message Position {
+  // Degrees latitude
+  double lat = 1;
+  // Degrees longitude
+  double lon = 2;
+  // Height in metres above the EGM2008 ellipsoid. If omitted, this means "local ground level".
+  optional double alt = 3;
+}
+
+// This is a Tait-Bryan rotation / set of Euler angles.
+// Specifically, these apply, in this order,
+// - yaw: a clockwise rotation in degrees about the Z axis,
+// - pitch: a clockwise rotation in degrees about the Y' axis, and
+// - roll: a clockwise rotation in degrees about the X'' axis, where
+// X points north/ahead, Y points east/right, and Z points down.
+// These are applied intrinsically, so that from the device centre,
+// - Y' points to "the right of the device", and
+// - X'' points to "the front of the device".
+message Orientation {
+  // Degrees clockwise around "down". In London, a yaw of 45° is pointing roughly towards Oslo.
+  double yaw = 1;
+  // Degrees clockwise around "right", after applying yaw. A pitch of 10° is looking at a point above the horizon.
+  double pitch = 2;
+  // Degrees clockwse around "ahead", after applying yaw then pitch. A roll of 10° is rolling your head a little to the right.
+  double roll = 3;
+}
+
+message DeviceState {
+  string device_id = 1;
+  // Device time - this is user-provided. It should be set to the time a client measures a device state.
+  google.protobuf.Timestamp time = 2;
+  // Server time - this will be set by Sora to the time a device state is first persisted.
+  google.protobuf.Timestamp time_received = 6;
+  optional Position pos = 3;
+  optional Orientation orientation = 4;
+  google.protobuf.Struct user_data = 5;
+}
+
+message DeviceStateWithProjectIds {
+  uint64 state_id = 3;
+  DeviceState state = 1;
+  repeated string project_ids = 2;
+}
+
+message AnnotatedDeviceState {
+  DeviceState state = 1;
+  google.protobuf.Struct annotations = 2;
+  string project_id = 3;
+  uint64 cursor = 4;
+}
+
+message AnnotatedDeviceStates {
+  repeated AnnotatedDeviceState states = 1;
+}
+
+message Annotation {
+  string project_id = 1;
+  string device_id = 2;
+  uint64 state_id = 3;
+  google.protobuf.Struct data = 4;
+}
+
+message Event {
+  string device_id = 1;
+  // Event time - this is user-provided. It should be set to the time a client measures an event.
+  google.protobuf.Timestamp time = 2;
+  // Server time - this will be set by Sora to the time an event is first persisted.
+  google.protobuf.Timestamp time_received = 7;
+  optional Position pos = 3;
+  string type = 4;
+  google.protobuf.Struct payload = 5;
+  string alertor_id = 6;
+}

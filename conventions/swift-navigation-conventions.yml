@@ -1,0 +1,163 @@
+generated: '2026-08-29'
+method: searched
+source: >-
+  https://support.swiftnav.com/support/solutions/articles/44002519397-ntrip-client-configuration-for-skylark-corrections
+  ; https://support.swiftnav.com/support/solutions/articles/44002287337-skylark-portal-user-guide
+  ; https://www.swiftnav.com/wp-json/exwatcvlc7/data (first-party Skylark FAQ, probed 200)
+  ; spec/ (SBP protocol definitions) ; grpc/ (Sora protobuf contract)
+name: Swift Navigation cross-cutting API conventions
+scope_note: >-
+  Swift Navigation has no REST API and publishes no OpenAPI, so several conventions that this
+  artifact normally reads out of a spec genuinely do not apply. Where a convention has no analogue on
+  a streaming binary protocol it is recorded as `na` with the reason, rather than as a zero.
+authentication:
+  style: >-
+    Per-surface. HTTP Basic per device for NTRIP corrections; OIDC/Auth0 for the portal and its
+    backend services; RFC 8628 device flow for Sora. See authentication/.
+  bearer_tokens: portal only
+versioning:
+  sbp:
+    scheme: semver
+    current: 6.5.1
+    released: '2026-07-08'
+    surface: >-
+      SBP versions the SPEC, not an endpoint. Wire compatibility is preserved by never reusing a
+      message-type number: superseded messages are kept in the spec and renamed with a Dep/DepA/DepB/
+      DepC suffix rather than removed, so an old receiver and a new library still interoperate.
+  sora:
+    scheme: package-path
+    current: v1beta
+    surface: 'Proto package path — sora.device.v1beta, sora.app.v1beta, sora.v1beta.'
+    note: Still on a beta package path after three years; no v1 was ever cut.
+  skylark:
+    scheme: none
+    surface: >-
+      The NTRIP surface is unversioned. Behaviour changes are announced as mountpoint renames
+      (see lifecycle/) rather than as a version bump, which means a client pinned to a mountpoint
+      name is the versioning mechanism.
+  web_data:
+    scheme: mixed
+    note: >-
+      wp-json namespaces are inconsistent — footer/v1, country/v1 and support/v1 are versioned;
+      e4lm6SFEc9, gy9i81x4mh, scXotoUe and exwatcvlc7 are opaque unversioned slugs. The receiver
+      catalog response carries its own {"version":"v1"} field in the body.
+idempotency:
+  supported: false
+  status: na
+  detail: >-
+    No idempotency key, no request-id header and no de-duplication semantics are documented on any
+    Swift Navigation surface. On the correction stream this is genuinely not applicable — an NTRIP
+    GET is a long-lived read, and re-issuing it costs nothing. It IS a real gap on the Sora
+    DeviceService write RPCs (SetDeviceState, AddEvent) and on the portal's subscription mutations,
+    neither of which document any replay protection.
+pagination:
+  style: cursor
+  applies_to: Sora AppService only
+  detail: >-
+    Sora's contract documents a genuine opaque-cursor model in prose inside
+    sora/app/v1beta/service.proto, and it is unusually well specified for a beta API: cursors are
+    STABLE (always the same position), UNIQUE (distinguish elements sharing a timestamp), OPAQUE
+    (clients must not do arithmetic on them) and ORDERED (a greater cursor is later in the series).
+  source: grpc/swift-navigation-sora-app-v1beta-service.proto
+  other_surfaces: >-
+    The wp-json data endpoints return whole collections in one response (the receiver catalog is a
+    single 42 KB body with count:134 and no paging parameters).
+error_envelope:
+  skylark_ntrip:
+    style: HTTP status + NTRIP source table
+    documented: false
+    detail: >-
+      Swift Navigation publishes no error reference for the caster. Standard NTRIP behaviour applies
+      (401 on bad credentials, sourcetable returned instead of a stream on an unknown mountpoint) but
+      Swift Navigation does not document it, so a client cannot distinguish "wrong password",
+      "subscription lapsed" and "wrong mountpoint" from published material.
+  sora:
+    style: gRPC status codes
+    documented: false
+    detail: The protos define no error messages and no google.rpc.Status detail types.
+  rfc9457: false
+rate_limit_signaling:
+  documented: false
+  detail: See rate-limits/ — no limits and no response headers are published on any surface.
+request_id_tracing:
+  documented: false
+metadata_and_expansion:
+  detail: >-
+    Sora carries free-form google.protobuf.Struct fields for extensibility — DeviceState.user_data,
+    Event.payload, AnnotatedDeviceState.annotations, and the config field on Annotator/Alertor/
+    EventGenerator. The contract is explicit that the schema of `config` depends on the `type`
+    string, and that Project.Dashboard is internal with no compatibility promise.
+dry_run_mode:
+  supported: false
+  status: na
+  detail: >-
+    No dry-run, preview or validate-only mode on any surface. On the correction stream there is
+    nothing to rehearse; on the portal's billing mutations its absence is a real gap.
+reversibility:
+  grade: verified
+  applies_to: Skylark subscription and device lifecycle (Skylark User Portal)
+  source: >-
+    https://www.swiftnav.com/wp-json/exwatcvlc7/data and
+    https://support.swiftnav.com/support/solutions/articles/44002287337-skylark-portal-user-guide
+  summary: >-
+    Skylark's write surface is subscription management, and Swift Navigation documents both which
+    actions can be taken back and where the boundary is. The boundary is stated in terms of the
+    billing cycle rather than a duration, which is a real window: it tells an operator exactly when
+    an action stops being reversible.
+  operations:
+    - action: Pause a subscription
+      reversal: Turn the Auto-Renew toggle back ON
+      window: >-
+        Any time before the end of the current billing cycle. Disabling auto-renew leaves the plan
+        active until the cycle ends; the device is only disabled at that boundary.
+      reversible: true
+      docs: https://support.swiftnav.com/support/solutions/articles/44002287337-skylark-portal-user-guide
+    - action: Let a subscription expire
+      reversal: Turn Auto-Renew back ON with a valid payment method on file
+      window: >-
+        Open-ended — an expired plan can be resumed later. Billing restarts immediately and the
+        device's NTRIP credentials are reactivated automatically.
+      reversible: true
+    - action: Payment failure disabling credentials
+      reversal: Update the payment method
+      window: >-
+        Open-ended. Credentials are disabled "shortly after" a failed scheduled payment and
+        reactivate once a valid method is supplied.
+      reversible: true
+    - action: Change Skylark variant (Nx RTK / Cx / Dx) during the 14-day free trial
+      reversal: Change it again
+      window: >-
+        Until the 14-day trial expires. The variant selected at the moment of expiry becomes the
+        PERMANENT variant for that device once it converts to a paid subscription.
+      reversible: true
+      note: The hardest deadline Swift Navigation publishes, and the easiest one to miss.
+    - action: Change billing term (monthly <-> annual)
+      reversal: Change it back
+      window: Any time during a paid subscription. Unused time is credited and the balance charged immediately.
+      reversible: true
+    - action: Delete a device
+      reversal: none
+      window: none
+      reversible: false
+      note: >-
+        Stated by the provider without hedging - "Deleting a device is permanent and cannot be
+        undone, and no refunds will be issued for the remaining subscription term." An agent given
+        portal credentials must treat device deletion as terminal and as financially lossy.
+      docs: https://www.swiftnav.com/wp-json/exwatcvlc7/data
+    - action: Rotate an NTRIP password
+      reversal: none
+      window: none
+      reversible: false
+      note: >-
+        Passwords are not stored recoverably. Generating a new one invalidates the old one with no
+        way back, and every receiver configured with the old credential stops receiving corrections.
+  read_only_surfaces:
+    - Skylark NTRIP correction streams (read-only; reversibility na)
+    - Swift Navigation wp-json web data endpoints (GET only; reversibility na)
+    - Sora AppService (has full CRUD, but no reversal path is documented for any Delete RPC, and the endpoint is unreachable)
+cross_links:
+  authentication: authentication/swift-navigation-authentication.yml
+  lifecycle: lifecycle/swift-navigation-lifecycle.yml
+  rate_limits: rate-limits/swift-navigation-rate-limits.yml
+  plans: plans/swift-navigation-plans-pricing.yml
+  streams: asyncapi/swift-navigation-skylark-ntrip-streams.yml

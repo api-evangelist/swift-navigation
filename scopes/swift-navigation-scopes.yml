@@ -1,0 +1,46 @@
+generated: '2026-08-29'
+method: probed
+source: https://skylark-prod.us.auth0.com/.well-known/openid-configuration (HTTP 200, 2026-08-29)
+name: Swift Navigation OAuth scopes
+note: >-
+  The derive-oauth-scopes.py baseline could not run — it reads oauth2 securitySchemes from an OpenAPI
+  and Swift Navigation publishes none. These scopes are read directly from the discovery document of
+  the Auth0 tenant that fronts the Skylark User Portal and its backend services, identified from
+  https://account.swiftnav.com/runtime-config.js.
+docs: null
+docs_note: >-
+  No scopes or permissions reference page is published. Searched support.swiftnav.com (152-URL
+  sitemap) and www.swiftnav.com — neither documents an authorization model.
+issuer: https://skylark-prod.us.auth0.com/
+audience: https://account.swiftnav.com
+finding: >-
+  Every advertised scope is a stock OIDC identity scope. There is NOT ONE Skylark-specific API scope
+  — no read:devices, no write:subscriptions, no manage:credentials. A token issued by this tenant
+  carries identity claims and nothing that describes what it may do to a Skylark account, which means
+  an integrator (or an agent) cannot reason about least privilege before requesting one, and cannot
+  scope a token down if they wanted to.
+scopes:
+  - {name: openid, description: 'Issue an ID token (OIDC core).'}
+  - {name: profile, description: 'Basic profile claims.'}
+  - {name: offline_access, description: 'Issue a refresh token.'}
+  - {name: name, description: Full name claim.}
+  - {name: given_name, description: Given name claim.}
+  - {name: family_name, description: Family name claim.}
+  - {name: nickname, description: Nickname claim.}
+  - {name: email, description: Email address claim.}
+  - {name: email_verified, description: Email verification status claim.}
+  - {name: picture, description: Profile picture claim.}
+  - {name: created_at, description: Account creation timestamp claim.}
+  - {name: identities, description: Linked identity providers claim.}
+  - {name: phone, description: Phone number claim.}
+  - {name: address, description: Address claim.}
+grant_types:
+  - authorization_code
+  - client_credentials
+  - refresh_token
+  - implicit
+  - password
+  - 'urn:ietf:params:oauth:grant-type:device_code'
+  - 'urn:ietf:params:oauth:grant-type:token-exchange'
+  - 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+pkce: [S256, plain]

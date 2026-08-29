@@ -1,0 +1,40 @@
+generated: '2026-08-29'
+method: searched
+source: >-
+  https://support.swiftnav.com/support/solutions/articles/44002519397-ntrip-client-configuration-for-skylark-corrections ;
+  https://support.swiftnav.com/support/solutions/articles/44001850769-skylark-faq ;
+  https://www.swiftnav.com/wp-json/exwatcvlc7/data ; probed NTRIP sourcetables (examples/)
+name: Swift Navigation published rate limits
+limit_count: 0
+detail: >-
+  Swift Navigation publishes no rate limits, no quotas and no throttling behaviour for any surface,
+  and returns no rate-limit response headers on the surfaces that can be probed anonymously. This is
+  less anomalous than it looks: the metered unit on Skylark is a DEVICE SUBSCRIPTION, not a request.
+  One NTRIP credential holds one long-lived connection open and receives a continuous correction
+  stream — there is no request count to limit. The FAQ says explicitly that there is no minimum or
+  maximum number of receivers. What is genuinely undocumented is the failure behaviour an integrator
+  actually needs: what happens on concurrent connections with the same device credential, and what a
+  caster returns when a subscription lapses mid-stream.
+limits: []
+response_headers:
+  published: []
+  observed: []
+  probe: >-
+    Anonymous GET / against seven Skylark casters on 2026-08-29 returned HTTP 200 with content-type
+    gnss/sourcetable and no X-RateLimit-*, RateLimit-* or Retry-After header. The wp-json data
+    endpoints likewise returned no rate-limit headers.
+exhaustion_status_code: undocumented
+bandwidth_signal:
+  source: STR records in the probed NTRIP sourcetables
+  field: bitrate
+  value: 4000
+  unit: bits per second (advertised per stream)
+  note: >-
+    NOT a rate limit — it is the NTRIP sourcetable's advertised nominal bitrate for the stream, which
+    is the closest thing to a published throughput figure Swift Navigation provides.
+concurrency:
+  documented: false
+  note: >-
+    The portal issues one NTRIP username/password per device and the FAQ frames a subscription as
+    covering a device, which implies one concurrent connection per credential. That implication is
+    never stated, and no error is documented for exceeding it.

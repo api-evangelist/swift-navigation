@@ -1,0 +1,30 @@
+{
+  "copyright": [
+    "Copyright (C) 2019-2021 Swift Navigation Inc.",
+    "Contact: https://support.swiftnav.com",
+    "",
+    "This source is subject to the license found in the file 'LICENSE' which must",
+    "be distributed together with this source. All other rights reserved.",
+    "",
+    "THIS CODE AND INFORMATION IS PROVIDED 'AS IS' WITHOUT WARRANTY OF ANY KIND,",
+    "EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED",
+    "WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
+  ],
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "#MsgAcqResult",
+  "title":"MsgAcqResult",
+  "description":"This message describes the results from an attempted GPS signal acquisition search for a satellite PRN over a code phase/carrier frequency range. It contains the parameters of the point in the acquisition search space with the best carrier-to-noise (CN/0) ratio.\n",
+  "type": "object",
+  "properties": {
+    "cn0": {"type": "number"},
+    "cp": {"type": "number"},
+    "cf": {"type": "number"},
+    "sid": {"$ref": "GnssSignal.json"}
+  },
+  "required": [
+    "cn0",
+    "cp",
+    "cf",
+    "sid"
+  ]
+}

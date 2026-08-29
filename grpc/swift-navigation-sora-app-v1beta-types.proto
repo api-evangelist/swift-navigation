@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package sora.app.v1beta;
+
+import "google/protobuf/struct.proto";
+
+option optimize_for = LITE_RUNTIME;
+
+// A Device is a typically a process on a machine that is capable of
+// authenticating with and sending data to sora location data to Sora.
+message Device {
+  string id = 1;
+  string name = 2;
+  // Big Endian RGBA
+  uint32 color = 3;
+  repeated string project_id = 4;
+  string demo_type = 5;
+}
+
+// A Project is a collection of device state data and the data types that
+// are managed by the Sora AppService. It allows users to partition their
+// devices data streams and analyse each partition seperately
+message Project {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  uint32 color = 4 [deprecated = true];
+  string demo_type = 5;
+  Dashboard dashboard = 6;
+
+  // Dashboard UI specific attributes
+  // This submessage is considered internal: we don't promise not to break compatibility
+  // (though we'll do our best), and we don't guarantee any semantic meaning of its contents.
+  message Dashboard {
+    // Big Endian RGBA
+    uint32 color = 1;
+    string icon = 2;
+  }
+}
+
+// An Annotator contains configuration necessary to create an annotation
+// on the device state. The schema for config will depend on the type of the
+// annotator.
+message Annotator {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+  // Big Endian RGBA
+  uint32 color = 4;
+  bool enabled = 5;
+  google.protobuf.Struct config = 6;
+  string project_id = 7;
+}
+
+// An Alertor contains configuration necessary to send an alert to a
+// supported alerting system, e.g. slack. The schema for config will depend
+// on the type of the alertor.
+message Alertor {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+  // Big Endian RGBA
+  uint32 color = 4;
+  bool enabled = 5;
+  google.protobuf.Struct config = 6;
+  string project_id = 7;
+}
+
+// An EventGenerator is an expression that sora will evaluate on
+// The state.user_data and annotations section of an AnnotatedDeviceState and
+// the history of such AnnotatedDeviceState for a single device
+message EventGenerator {
+  string id = 1;
+  string name = 2;
+  // Big Endian RGBA
+  uint32 color = 3;
+  string version = 4;
+  string expression = 5;
+  string alertor_id = 6;
+  string project_id = 7;
+}
+
+// A layer is a GeoJSON feature collection with some
+// metadata that sora uses for book keeping and presentation
+message Layer {
+  string id = 1;
+  string name = 2;
+  // Big Endian RGBA
+  uint32 color = 3;
+  // a JSON array of GeoJSON Feature objects
+  string features_json = 4;
+  string project_id = 5;
+}

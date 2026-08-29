@@ -1,0 +1,91 @@
+generated: '2026-08-29'
+method: derived
+source: >-
+  Derived from the surfaces probed in this repository (examples/, asyncapi/). Searched first and
+  found nothing — see search_result below.
+name: Swift Navigation MCP server
+status: candidate
+search_result:
+  found: false
+  checked:
+    - {target: 'github.com/swift-nav (org repo search for "mcp")', result: 0 repositories}
+    - {target: 'npm registry search "swiftnav mcp" / "skylark mcp"', result: no first-party package}
+    - {target: 'pypi.org/pypi/swiftnav-mcp', status: 404}
+    - {target: 'https://mcp.swiftnav.com/mcp', result: DNS does not resolve}
+    - {target: 'https://www.swiftnav.com/mcp (POST tools/list)', status: 301, note: site-wide catch-all redirect to the homepage, not an MCP endpoint}
+    - {target: 'https://account.swiftnav.com/mcp (POST tools/list)', status: 405, note: static SPA host rejecting POST, not an MCP endpoint}
+  conclusion: >-
+    Swift Navigation ships no MCP server, hosted or local. No endpoint URL is asserted anywhere in
+    this file — the two 3xx/4xx responses above are ordinary web-server behaviour and must not be
+    read as an agent surface.
+deployment:
+  mode: none
+  auth: unknown
+  verified: searched
+candidate_tools:
+  note: >-
+    Derived ONLY from operations that were actually probed and returned 200 without credentials.
+    Every tool below maps to a real, keyless GET that an agent could make today. Nothing is derived
+    from the Skylark credentialed streams, the Sora contract (endpoint unreachable) or the portal's
+    backend services (no public contract), because inventing tools for those would assert reachable
+    capability that does not exist.
+  tools:
+    - name: list_skylark_streams
+      description: >-
+        Fetch the NTRIP sourcetable from a Skylark caster and return every available correction
+        stream with its RTCM message numbers, constellations and reference frame.
+      backing_request: 'GET http://<region>.<frequency>.skylark.swiftnav.com:2101/'
+      auth: none
+      input_schema:
+        type: object
+        properties:
+          region: {type: string, enum: [na, eu, ap]}
+          frequency: {type: string, enum: [l1l2, l1l5, all-freq]}
+        required: [region, frequency]
+      confidence: high
+      evidence: examples/swift-navigation-skylark-ntrip-sourcetable-*.txt (7 casters, all HTTP 200)
+    - name: check_receiver_compatibility
+      description: >-
+        Look up whether a given GNSS receiver brand/model is compatible with Skylark, and with which
+        variants, from Swift Navigation's own 134-entry catalog.
+      backing_request: 'GET https://www.swiftnav.com/wp-json/e4lm6SFEc9/data/'
+      auth: none
+      input_schema:
+        type: object
+        properties:
+          brand: {type: string}
+          receiver: {type: string}
+      confidence: high
+      evidence: examples/swift-navigation-skylark-receiver-catalog.json (HTTP 200, count 134)
+    - name: check_skylark_country_availability
+      description: Return which Skylark variants (Nx RTK, Cx, Dx) are available in a given country.
+      backing_request: 'GET https://www.swiftnav.com/wp-json/gy9i81x4mh/data'
+      auth: none
+      input_schema:
+        type: object
+        properties:
+          country: {type: string}
+        required: [country]
+      confidence: high
+      evidence: examples/swift-navigation-skylark-country-availability.json (HTTP 200)
+    - name: describe_sbp_message
+      description: >-
+        Return the field layout, units and semantics of a Swift Binary Protocol message type from the
+        published specification.
+      backing_source: spec/*.yaml and json-schema/*.json in this repository
+      auth: none
+      input_schema:
+        type: object
+        properties:
+          message: {type: string, description: 'e.g. MSG_POS_LLH'}
+        required: [message]
+      confidence: high
+      evidence: 242 message definitions across 29 packages; 225 JSON Schema documents.
+gap:
+  detail: >-
+    The interesting absence is the credentialed one. An agent managing a fleet of receivers would
+    want to add a device, read its NTRIP credentials, switch a Skylark variant, or pause a
+    subscription — all of which the Skylark User Portal does through
+    account-service.skylark.swiftnav.com and subscription-service.skylark.swiftnav.com. Neither
+    service publishes a contract, so those operations cannot be described, let alone exposed as
+    tools.

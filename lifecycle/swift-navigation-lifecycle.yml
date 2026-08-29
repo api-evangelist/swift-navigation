@@ -1,0 +1,191 @@
+generated: '2026-08-29'
+method: searched
+source: >-
+  https://github.com/swift-nav/libsbp/releases ; libsbp CHANGELOG.md ; spec/ (derived) ;
+  https://support.swiftnav.com/support/solutions/articles/44002508239-new-skylark-names-2024-02-02- ;
+  https://support.swiftnav.com/support/solutions/articles/44002517400-new-skylark-mountpoint-names-2024-03-08-
+name: Swift Navigation API lifecycle
+status_page:
+  published: false
+  probe:
+    - {url: 'https://status.swiftnav.com/', result: 'DNS does not resolve'}
+    - {url: 'https://swiftnav.statuspage.io/', result: 'redirects to atlassian.com/software/statuspage - no tenant'}
+  detail: >-
+    Swift Navigation publishes NO status page for Skylark. This is the sharpest operational gap in the
+    profile: Skylark is a real-time correction service whose customers are autonomous vehicles,
+    robots and survey equipment, and there is no public place to see whether a regional caster is up.
+    The FAQ routes availability questions to a support ticket instead. No StatusPage pointer is
+    emitted, because none exists.
+deprecation_policy:
+  published_document: false
+  practice: documented-by-convention
+  detail: >-
+    Swift Navigation has no written deprecation policy page, but SBP encodes one in the contract
+    itself and has followed it consistently for a decade. A superseded message is never deleted and
+    its type number is never reused; it is renamed with a _DEP / _DEP_A ... _DEP_F suffix, kept in the
+    spec, and kept in every generated binding. The result is that an old receiver and a current
+    library still interoperate, and a reader of the spec can see the whole succession chain
+    (MSG_OBS_DEP_A -> _DEP_B -> _DEP_C -> MSG_OBS). No Sunset or Deprecation HTTP headers apply -
+    SBP is a binary wire protocol, not an HTTP API.
+  http_headers:
+    rfc8594_sunset: false
+    deprecation_header: false
+    note: na - no HTTP API surface to carry them.
+sbp:
+  versioning: semver
+  current_version: v6.5.1
+  released: '2026-07-08'
+  definitions_total: 322
+  messages_total: 242
+  deprecated_definitions: 84
+  deprecated_share: '26% of all published definitions'
+  derived_from: spec/*.yaml (parsed 2026-08-29)
+  deprecated_by_package:
+    swiftnav.sbp.acquisition:
+      - MSG_ACQ_RESULT_DEP_C
+      - MSG_ACQ_RESULT_DEP_B
+      - MSG_ACQ_RESULT_DEP_A
+      - AcqSvProfileDep
+      - MSG_ACQ_SV_PROFILE_DEP
+    swiftnav.sbp.bootload:
+      - MSG_BOOTLOADER_HANDSHAKE_DEP_A
+    swiftnav.sbp.gnss:
+      - GnssSignalDep
+      - GPSTimeDep
+    swiftnav.sbp.integrity:
+      - MSG_SSR_FLAG_HIGH_LEVEL_DEP_A
+    swiftnav.sbp.linux:
+      - MSG_LINUX_CPU_STATE_DEP_A
+      - MSG_LINUX_MEM_STATE_DEP_A
+      - MSG_LINUX_SYS_STATE_DEP_A
+    swiftnav.sbp.logging:
+      - MSG_PRINT_DEP
+    swiftnav.sbp.navigation:
+      - MSG_GPS_TIME_DEP_A
+      - MSG_DOPS_DEP_A
+      - MSG_POS_ECEF_DEP_A
+      - MSG_POS_LLH_DEP_A
+      - MSG_BASELINE_ECEF_DEP_A
+      - MSG_BASELINE_NED_DEP_A
+      - MSG_VEL_ECEF_DEP_A
+      - MSG_VEL_NED_DEP_A
+      - MSG_BASELINE_HEADING_DEP_A
+      - MSG_PROTECTION_LEVEL_DEP_A
+    swiftnav.sbp.observation:
+      - EphemerisCommonContentDepB
+      - EphemerisCommonContentDepA
+      - MSG_EPHEMERIS_GPS_DEP_E
+      - MSG_EPHEMERIS_GPS_DEP_F
+      - MSG_EPHEMERIS_GAL_DEP_A
+      - MSG_EPHEMERIS_SBAS_DEP_A
+      - MSG_EPHEMERIS_GLO_DEP_A
+      - MSG_EPHEMERIS_SBAS_DEP_B
+      - MSG_EPHEMERIS_GLO_DEP_B
+      - MSG_EPHEMERIS_GLO_DEP_C
+      - MSG_EPHEMERIS_GLO_DEP_D
+      - MSG_EPHEMERIS_DEP_D
+      - MSG_EPHEMERIS_DEP_A
+      - MSG_EPHEMERIS_DEP_B
+      - MSG_EPHEMERIS_DEP_C
+      - ObservationHeaderDep
+      - CarrierPhaseDepA
+      - PackedObsContentDepA
+      - PackedObsContentDepB
+      - PackedObsContentDepC
+      - MSG_OBS_DEP_A
+      - MSG_OBS_DEP_B
+      - MSG_OBS_DEP_C
+      - MSG_SV_CONFIGURATION_GPS_DEP
+      - MSG_GROUP_DELAY_DEP_A
+      - MSG_GROUP_DELAY_DEP_B
+      - AlmanacCommonContentDep
+      - MSG_ALMANAC_GPS_DEP
+      - MSG_ALMANAC_GLO_DEP
+    swiftnav.sbp.piksi:
+      - MSG_RESET_DEP
+      - MSG_INIT_BASE_DEP
+      - MSG_MASK_SATELLITE_DEP
+      - MSG_SPECAN_DEP
+    swiftnav.sbp.signing:
+      - MSG_CERTIFICATE_CHAIN_DEP
+      - MSG_ECDSA_SIGNATURE_DEP_B
+      - MSG_ECDSA_SIGNATURE_DEP_A
+      - MSG_ED25519_CERTIFICATE_DEP
+      - MSG_ED25519_SIGNATURE_DEP_A
+      - MSG_ED25519_SIGNATURE_DEP_B
+    swiftnav.sbp.solution_meta:
+      - MSG_SOLN_META_DEP_A
+    swiftnav.sbp.ssr:
+      - MSG_SSR_STEC_CORRECTION_DEP
+      - MSG_SSR_TILE_DEFINITION_DEP_A
+      - MSG_SSR_TILE_DEFINITION_DEP_B
+      - MSG_SSR_SATELLITE_APC_DEP
+      - MSG_SSR_ORBIT_CLOCK_DEP_A
+      - STECHeaderDepA
+      - GriddedCorrectionHeaderDepA
+      - GridDefinitionHeaderDepA
+      - MSG_SSR_STEC_CORRECTION_DEP_A
+      - MSG_SSR_GRIDDED_CORRECTION_NO_STD_DEP_A
+      - MSG_SSR_GRIDDED_CORRECTION_DEP_A
+      - MSG_SSR_GRID_DEFINITION_DEP_A
+    swiftnav.sbp.tracking:
+      - MSG_TRACKING_STATE_DETAILED_DEP_A
+      - MSG_TRACKING_STATE_DETAILED_DEP
+      - TrackingChannelCorrelationDep
+      - MSG_TRACKING_IQ_DEP_B
+      - MSG_TRACKING_IQ_DEP_A
+      - TrackingChannelStateDepA
+      - MSG_TRACKING_STATE_DEP_A
+      - TrackingChannelStateDepB
+      - MSG_TRACKING_STATE_DEP_B
+skylark:
+  versioning: none
+  change_communication: mountpoint and product renames announced as support articles
+  events:
+    - date: '2024-02-02'
+      change: Skylark product variants renamed
+      url: https://support.swiftnav.com/support/solutions/articles/44002508239-new-skylark-names-2024-02-02-
+    - date: '2024-03-08'
+      change: Skylark NTRIP mountpoint names changed
+      url: https://support.swiftnav.com/support/solutions/articles/44002517400-new-skylark-mountpoint-names-2024-03-08-
+      impact: >-
+        A mountpoint rename is a breaking change for every deployed receiver, because the mountpoint
+        string is baked into NTRIP client configuration in the field. Announced only as a knowledge
+        base article, with no machine-readable notice and no deprecation window published.
+  sla:
+    published: false
+    marketing_claim: >-
+      The Skylark product page advertises "enterprise-grade SLAs" but no SLA document, uptime target
+      or credit schedule is published at a public URL.
+sora:
+  status: retired
+  evidence:
+    - >-
+      https://grpc.sora.swiftnav.com resolves (44.238.46.100) but serves an
+      "O=Acme Co, CN=Kubernetes Ingress Controller Fake Certificate" placeholder certificate, so no
+      validating client can connect.
+    - >-
+      https://support.swiftnav.com/support/solutions/articles/44002416509-introduction-to-sora - the
+      article the Sora client README links to - returns a 302 redirect loop (curl stopped at 50 hops).
+      It is absent from https://support.swiftnav.com/support/sitemap.xml.
+    - >-
+      sora-device-client last released 2023-04-17 (PyPI 1.1.0); the pinned sora-api BSR commit dates
+      from 2023-03-29.
+  note: >-
+    The CONTRACT is still public and complete on buf.build/swift-nav/sora-api and is preserved in
+    grpc/. Swift Navigation has never marked it deprecated, retired or sunset anywhere - the product
+    simply stopped being reachable. That gap between a live published contract and a dead endpoint is
+    the finding.
+libsbp_release_cadence:
+  recent:
+    - {version: v6.5.1, date: '2026-07-08'}
+    - {version: v6.5.0, date: '2026-05-13'}
+    - {version: v6.4.0, date: '2026-04-15'}
+    - {version: v6.3.3, date: '2026-03-18'}
+    - {version: v6.3.2, date: '2025-11-11'}
+    - {version: v6.3.1, date: '2025-10-28'}
+    - {version: v6.3.0, date: '2025-09-16'}
+    - {version: v6.2.2, date: '2025-08-07'}
+  note: >-
+    Roughly monthly through 2026 after a 10-month gap between v6.2.1 (2024-10-22) and v6.2.2
+    (2025-08-07). Actively maintained.

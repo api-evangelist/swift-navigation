@@ -1,0 +1,98 @@
+generated: '2026-08-29'
+method: searched
+source: https://buf.build/swift-nav/sora-api
+name: Sora API (gRPC / Protocol Buffers)
+description: >-
+  Sora is Swift Navigation's cloud service for collecting, storing and analysing device location
+  time series. Its complete contract is published as a public Buf Schema Registry module under
+  Swift Navigation's own BSR owner account, buf.build/swift-nav/sora-api, and was downloaded
+  anonymously and saved verbatim.
+ownership: >-
+  Confirmed first-party. The BSR owner is swift-nav; every proto declares package sora.*; the
+  module's own buf.md describes DeviceService and AppService; and the pinned commit
+  38a20ee18d7b45858cfa63e72353faea is the exact ref recorded in .api-version in Swift Navigation's
+  own https://github.com/swift-nav/sora-device-client repository.
+retrieved:
+  url: https://buf.build/buf.alpha.registry.v1alpha1.DownloadService/Download
+  reference: main
+  commit: 38a20ee18d7b45858cfa63e72353faea
+  commit_created: '2023-03-29'
+  http_status: 200
+endpoint:
+  url: https://grpc.sora.swiftnav.com
+  port: 443
+  source: >-
+    https://raw.githubusercontent.com/swift-nav/sora-device-client/main/sora_device_client/config/server.py
+    (DEFAULT_SERVER_URL)
+  reachable: false
+  probe:
+    date: '2026-08-29'
+    result: >-
+      DNS resolves (44.238.46.100) but the TLS handshake presents a certificate with
+      subject/issuer "O=Acme Co, CN=Kubernetes Ingress Controller Fake Certificate"
+      (notBefore 2026-07-23, notAfter 2027-07-23) — the default self-signed placeholder an
+      ingress-nginx controller serves when no TLS secret is configured for the host. No client
+      that validates certificates can connect. Treated as unreachable, not as a probe failure.
+services:
+  - name: sora.device.v1beta.DeviceService
+    file: swift-navigation-sora-device-v1beta-service.proto
+    purpose: Device -> Server. Sending device state and events to Sora.
+    rpcs:
+      - {name: StreamDeviceState, streaming: client}
+      - {name: StreamEvent, streaming: client}
+      - {name: SetDeviceState, streaming: none}
+      - {name: AddEvent, streaming: none}
+      - {name: AuthServerInfo, streaming: none}
+    rpc_count: 5
+  - name: sora.app.v1beta.AppService
+    file: swift-navigation-sora-app-v1beta-service.proto
+    purpose: Server -> Application. Viewing and analysing the collected data.
+    resources: [Layer, EventGenerator, Alertor, Annotator, Project, Device]
+    rpcs:
+      - {name: StreamState, streaming: server}
+      - {name: StreamEvents, streaming: server}
+      - {name: QueryState, streaming: none}
+      - {name: QueryEvents, streaming: none}
+      - {name: QueryStateAggregate, streaming: none}
+      - {name: ReadLayers, streaming: none}
+      - {name: CreateLayer, streaming: none}
+      - {name: UpdateLayer, streaming: none}
+      - {name: DeleteLayer, streaming: none}
+      - {name: ReadEventGenerators, streaming: none}
+      - {name: CreateEventGenerator, streaming: none}
+      - {name: UpdateEventGenerator, streaming: none}
+      - {name: DeleteEventGenerator, streaming: none}
+      - {name: ReadAlertors, streaming: none}
+      - {name: CreateAlertor, streaming: none}
+      - {name: UpdateAlertor, streaming: none}
+      - {name: DeleteAlertor, streaming: none}
+      - {name: ReadAnnotators, streaming: none}
+      - {name: CreateAnnotator, streaming: none}
+      - {name: UpdateAnnotator, streaming: none}
+      - {name: DeleteAnnotator, streaming: none}
+      - {name: ReadProjects, streaming: none}
+      - {name: CreateProject, streaming: none}
+      - {name: UpdateProject, streaming: none}
+      - {name: DeleteProject, streaming: none}
+      - {name: ReadDevices, streaming: none}
+      - {name: CreateDevice, streaming: none}
+      - {name: UpdateDevice, streaming: none}
+      - {name: DeleteDevice, streaming: none}
+    rpc_count: 29
+rpc_count_total: 34
+message_count: 85
+files:
+  - swift-navigation-sora-device-v1beta-service.proto
+  - swift-navigation-sora-app-v1beta-service.proto
+  - swift-navigation-sora-app-v1beta-types.proto
+  - swift-navigation-sora-v1beta-common.proto
+  - swift-navigation-buf.md
+authentication:
+  scheme: oauth2
+  flow: urn:ietf:params:oauth:grant-type:device_code
+  rfc: RFC 8628 (OAuth 2.0 Device Authorization Grant)
+  detail: >-
+    The contract documents its own auth in a comment on DeviceService.AuthServerInfo: a device calls
+    the unauthenticated AuthServerInfo RPC, receives an Auth0AuthServerInfo {host, client_id,
+    audience}, and runs an RFC 8628 device flow against it. The credentials used are the AppService
+    credentials, and the browser leg of the flow is where a device gets bound to a project.

@@ -1,0 +1,27 @@
+generated: '2026-08-29'
+method: searched
+source: https://github.com/swift-nav/libsbp/tree/master/jsonschema
+name: Swift Binary Protocol JSON Schema definitions
+description: >-
+  225 JSON Schema documents (draft-06), one per SBP message type and per shared struct, published
+  by Swift Navigation so web clients can validate and process SBP in its JSON form (SBP-JSON, the
+  representation the sbp2json / json2sbp tools emit). Generated from spec/ and saved verbatim.
+schema_dialect: http://json-schema.org/draft-06/schema#
+count: 225
+license: LGPL-3.0
+defect:
+  found: '2026-08-29'
+  severity: low
+  affected:
+    - MsgStartup.json
+    - MsgCellModemStatus.json
+  detail: >-
+    Two of the 225 published schemas do not parse as strict JSON — both carry an illegal trailing
+    comma before the closing brace of an object (line 20). Python's json.load, Go's encoding/json
+    and most JSON Schema validators reject them; permissive JS parsers do not. Files are kept
+    VERBATIM as published; the defect is recorded rather than repaired, because repairing a searched
+    artifact would misrepresent what Swift Navigation actually serves.
+  reported: false
+  remedy: >-
+    Remove the trailing comma in the generator template
+    (generator/sbpg/targets/resources/message_template.jsonschema.j2) and regenerate.

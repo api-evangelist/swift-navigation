@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package sora.device.v1beta;
+
+import "sora/v1beta/common.proto";
+
+option optimize_for = LITE_RUNTIME;
+
+// Device <-> Server API
+service DeviceService {
+  // Stream device state updates to server
+  rpc StreamDeviceState(stream StreamDeviceStateRequest) returns (StreamDeviceStateResponse) {}
+  // Stream events to server
+  rpc StreamEvent(stream StreamEventRequest) returns (StreamEventResponse) {}
+
+  rpc SetDeviceState(SetDeviceStateRequest) returns (SetDeviceStateResponse) {}
+  rpc AddEvent(AddEventRequest) returns (AddEventResponse) {}
+
+  // Obtain information about the Auth Server
+  //
+  // The Auth Server may be used to initiate a OAuth 2.0 Device Authoriztaion Flow per RFC8628
+  // to give a device client access to this DeviceService. The credentials to be used are those
+  // for the AppService, and users will be able to associate a device to a project on the browser
+  // component of the Authorization Flow
+  rpc AuthServerInfo(AuthServerInfoRequest) returns (AuthServerInfoResponse) {}
+}
+
+message StreamDeviceStateRequest {
+  sora.v1beta.DeviceState state = 1;
+}
+message StreamDeviceStateResponse {}
+
+message StreamEventRequest {
+  sora.v1beta.Event event = 1;
+}
+message StreamEventResponse {}
+
+message SetDeviceStateRequest {
+  sora.v1beta.DeviceState state = 1;
+}
+message SetDeviceStateResponse {}
+
+message AddEventRequest {
+  sora.v1beta.Event event = 1;
+}
+message AddEventResponse {}
+
+message AuthServerInfoRequest {}
+message AuthServerInfoResponse {
+  oneof info {
+    Auth0AuthServerInfo auth0 = 1;
+  }
+}
+
+message Auth0AuthServerInfo {
+  string host = 1;
+  string client_id = 2;
+  string audience = 3;
+}

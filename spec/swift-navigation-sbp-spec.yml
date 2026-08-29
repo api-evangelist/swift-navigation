@@ -1,0 +1,85 @@
+generated: '2026-08-29'
+method: searched
+source: https://github.com/swift-nav/libsbp/tree/master/spec/yaml/swiftnav/sbp
+name: Swift Binary Protocol (SBP) — machine-readable protocol specification
+description: >-
+  SBP is Swift Navigation's native binary wire protocol for its GNSS receivers (Piksi, Duro) and
+  for the Starling positioning engine. It is the company's real API contract: 29 YAML package
+  definitions, 442 KB, that declare every message type, its field layout, units, bit-flags and
+  enumerated values. Every first-party client library (C, Python, Rust, Java, JavaScript, Haskell),
+  the JSON Schema set in json-schema/, and the Kaitai Struct descriptions are all GENERATED from
+  these files — so this is the source of truth, not a rendering of it.
+license: LGPL-3.0 (see https://github.com/swift-nav/libsbp/blob/master/LICENSE)
+version: v6.5.1
+released: '2026-07-08'
+format: YAML message-definition DSL (libsbp generator schema)
+docs: https://swift-nav.github.io/libsbp/
+packages:
+  - file: swift-navigation-sbp-acquisition.yaml
+    package: swiftnav.sbp.acquisition
+  - file: swift-navigation-sbp-base.yaml
+    package: swiftnav.sbp.base
+  - file: swift-navigation-sbp-bootload.yaml
+    package: swiftnav.sbp.bootload
+  - file: swift-navigation-sbp-ext_events.yaml
+    package: swiftnav.sbp.ext_events
+  - file: swift-navigation-sbp-file_io.yaml
+    package: swiftnav.sbp.file_io
+  - file: swift-navigation-sbp-flash.yaml
+    package: swiftnav.sbp.flash
+  - file: swift-navigation-sbp-gnss.yaml
+    package: swiftnav.sbp.gnss
+  - file: swift-navigation-sbp-imu.yaml
+    package: swiftnav.sbp.imu
+  - file: swift-navigation-sbp-integrity.yaml
+    package: swiftnav.sbp.integrity
+  - file: swift-navigation-sbp-linux.yaml
+    package: swiftnav.sbp.linux
+  - file: swift-navigation-sbp-logging.yaml
+    package: swiftnav.sbp.logging
+  - file: swift-navigation-sbp-mag.yaml
+    package: swiftnav.sbp.mag
+  - file: swift-navigation-sbp-navigation.yaml
+    package: swiftnav.sbp.navigation
+    note: Largest package (108 KB) — position, velocity, baseline and time solutions.
+  - file: swift-navigation-sbp-ndb.yaml
+    package: swiftnav.sbp.ndb
+  - file: swift-navigation-sbp-observation.yaml
+    package: swiftnav.sbp.observation
+  - file: swift-navigation-sbp-orientation.yaml
+    package: swiftnav.sbp.orientation
+  - file: swift-navigation-sbp-piksi.yaml
+    package: swiftnav.sbp.piksi
+  - file: swift-navigation-sbp-profiling.yaml
+    package: swiftnav.sbp.profiling
+  - file: swift-navigation-sbp-sbas.yaml
+    package: swiftnav.sbp.sbas
+  - file: swift-navigation-sbp-settings.yaml
+    package: swiftnav.sbp.settings
+  - file: swift-navigation-sbp-signing.yaml
+    package: swiftnav.sbp.signing
+  - file: swift-navigation-sbp-solution_meta.yaml
+    package: swiftnav.sbp.solution_meta
+  - file: swift-navigation-sbp-ssr.yaml
+    package: swiftnav.sbp.ssr
+    note: State Space Representation corrections — the payload Skylark's SSR mountpoints carry.
+  - file: swift-navigation-sbp-system.yaml
+    package: swiftnav.sbp.system
+  - file: swift-navigation-sbp-telemetry.yaml
+    package: swiftnav.sbp.telemetry
+  - file: swift-navigation-sbp-tracking.yaml
+    package: swiftnav.sbp.tracking
+  - file: swift-navigation-sbp-types.yaml
+    package: swiftnav.sbp.types
+  - file: swift-navigation-sbp-user.yaml
+    package: swiftnav.sbp.user
+  - file: swift-navigation-sbp-vehicle.yaml
+    package: swiftnav.sbp.vehicle
+derived_artifacts:
+  - path: ../json-schema/
+    count: 225
+    note: >-
+      JSON Schema draft-06 definitions, one per SBP message and per shared struct, published by
+      Swift Navigation for web clients consuming SBP-JSON. Downloaded verbatim.
+  - path: ../grpc/
+    note: Unrelated to SBP — the Sora gRPC contract, from buf.build/swift-nav/sora-api.

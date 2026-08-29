@@ -1,18 +1,39 @@
 aid: swift-navigation
 name: Swift Navigation
-description: 'Swift Navigation is a company surfaced via the API Evangelist harvest backlog (source: secondary-market;
-  backed by lemnos-labs) and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Swift Navigation builds precise positioning technology for mass-market applications — automotive
+  ADAS and autonomy, mobile handsets, robotics, drones, micromobility, fleet and asset tracking, GIS
+  and construction. Its flagship service, Skylark, is a cloud-based GNSS corrections service that
+  streams RTCM 3.x corrections over NTRIP from regional casters in North America, Europe and Asia
+  Pacific, correcting satellite clock, orbit and atmospheric errors to take positioning from several
+  metres to a few centimetres. Skylark ships in three variants — Nx RTK (network RTK on virtual
+  reference stations), Cx (PPP-RTK, continent-wide, ISO 26262:2018 certified by UL Solutions) and Dx
+  (differential code corrections for handsets and IoT). Swift also publishes the Swift Binary
+  Protocol (SBP), the open, machine-readable wire protocol for its Piksi and Duro GNSS receivers and
+  its Starling positioning engine, along with generated client libraries in six languages, and it
+  publishes the complete gRPC contract for its Sora location time-series service on the Buf Schema
+  Registry.
+image: https://www.swiftnav.com/wp-content/uploads/SwiftNav-Social-Card.png
 url: https://raw.githubusercontent.com/api-evangelist/swift-navigation/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-29'
 modified: '2026-08-29'
 tags:
 - Company
-apis: []
+- GNSS
+- Precise Positioning
+- Location
+- Corrections
+- RTK
+- NTRIP
+- RTCM
+- Automotive
+- Geospatial
+- IoT
+- Robotics
+- Protocols
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -20,6 +41,173 @@ maintainers:
   email: info@apis.io
 x-backed-by:
 - lemnos-labs
+apis:
+- name: Skylark Precise Positioning Service
+  description: >-
+    Real-time GNSS corrections delivered as continuously-open NTRIP streams. A client opens an HTTP
+    GET against a regional caster mountpoint with HTTP Basic credentials issued per device, and the
+    caster writes RTCM 3.x correction frames until the connection closes, while the client pushes its
+    own approximate position back as NMEA GGA. Each caster serves a keyless NTRIP sourcetable at "/"
+    that enumerates every stream, its RTCM message numbers and its constellation set.
+  humanURL: https://www.swiftnav.com/products/skylark
+  baseURL: http://na.all-freq.skylark.swiftnav.com:2101
+  tags:
+  - GNSS
+  - Corrections
+  - NTRIP
+  - RTCM
+  - Streaming
+  properties:
+  - type: Documentation
+    url: https://support.swiftnav.com/support/solutions/articles/44002519397-ntrip-client-configuration-for-skylark-corrections
+  - type: GettingStarted
+    url: https://www.swiftnav.com/skylark-quick-start-guide
+  - type: Authentication
+    url: authentication/swift-navigation-authentication.yml
+  - type: StreamCatalog
+    url: asyncapi/swift-navigation-skylark-ntrip-streams.yml
+  - type: Examples
+    url: examples/swift-navigation-examples.yml
+  - type: Plans
+    url: plans/swift-navigation-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/swift-navigation-rate-limits.yml
+  - type: SignUp
+    url: https://account.swiftnav.com/sign-up
+- name: Swift Binary Protocol (SBP)
+  description: >-
+    The native binary protocol for Swift Navigation devices — Piksi and Duro GNSS receivers and the
+    Starling positioning engine. 242 message types across 29 packages carry position, velocity,
+    baseline and time solutions, raw observations and ephemerides, SSR corrections, integrity bounds,
+    message signing, inertial and vehicle inputs, and device management. The machine-readable
+    specification is published as YAML and every client library is generated from it, along with 225
+    JSON Schema documents for the JSON representation.
+  humanURL: https://swift-nav.github.io/libsbp/
+  baseURL: tcp://{device-host}:55556
+  tags:
+  - Protocol
+  - GNSS
+  - Binary
+  - JSON Schema
+  properties:
+  - type: Specification
+    url: spec/swift-navigation-sbp-spec.yml
+  - type: JSONSchema
+    url: json-schema/swift-navigation-json-schema.yml
+  - type: SourceCode
+    url: https://github.com/swift-nav/libsbp
+  - type: Documentation
+    url: https://swift-nav.github.io/libsbp/
+  - type: ChangeLog
+    url: changelog/swift-navigation-changelog.yml
+  - type: DataModel
+    url: data-model/swift-navigation-data-model.yml
+- name: Sora API
+  description: >-
+    gRPC service for collecting, storing and analysing device location time series. DeviceService (5
+    RPCs) takes device state and events from the field; AppService (29 RPCs) queries and streams that
+    data and manages projects, devices, layers, annotators, alertors and event generators. The
+    complete contract is published as a public Buf Schema Registry module. The endpoint is no longer
+    reachable — see lifecycle/ — but the contract remains public.
+  humanURL: https://buf.build/swift-nav/sora-api
+  baseURL: https://grpc.sora.swiftnav.com
+  tags:
+  - gRPC
+  - Protobuf
+  - Location
+  - Time Series
+  properties:
+  - type: Protobuf
+    url: grpc/swift-navigation-sora-api.yml
+  - type: SourceCode
+    url: https://github.com/swift-nav/sora-device-client
+  - type: Documentation
+    url: https://buf.build/swift-nav/sora-api
+- name: Swift Navigation Web Data Endpoints
+  description: >-
+    First-party, keyless JSON endpoints on the Swift Navigation website that power the Skylark User
+    Portal and the receiver compatibility checker — the 134-entry third-party receiver compatibility
+    catalog, per-country Skylark variant availability, the Skylark support FAQ, and site navigation.
+    They are named in the portal's own public runtime configuration but are not otherwise documented
+    or versioned consistently.
+  humanURL: https://www.swiftnav.com/compatibility-checker
+  baseURL: https://www.swiftnav.com/wp-json
+  tags:
+  - JSON
+  - Catalog
+  - Undocumented
+  properties:
+  - type: Examples
+    url: examples/swift-navigation-examples.yml
 common:
+- type: DomainSecurity
+  url: security/swift-navigation-domain-security.yml
 - type: Website
-  url: https://forgeglobal.com/swift-navigation_stock/
+  url: https://www.swiftnav.com/
+- type: Documentation
+  url: https://support.swiftnav.com/support/solutions
+- type: APIReference
+  url: https://swift-nav.github.io/libsbp/
+- type: GettingStarted
+  url: https://www.swiftnav.com/get-started
+- type: Support
+  url: https://support.swiftnav.com/support/home
+- type: Blog
+  url: https://www.swiftnav.com/resource-library
+- type: BlogRSS
+  url: https://www.swiftnav.com/feed
+- type: GitHubOrganization
+  url: https://github.com/swift-nav
+- type: SignUp
+  url: https://account.swiftnav.com/sign-up
+- type: TermsOfService
+  url: https://www.swiftnav.com/terms-and-conditions
+- type: PrivacyPolicy
+  url: https://www.swiftnav.com/privacy-policy
+- type: Compliance
+  url: conformance/swift-navigation-conformance.yml
+- type: Conformance
+  url: conformance/swift-navigation-conformance.yml
+- type: SDKs
+  url: packages/swift-navigation-packages.yml
+- type: Packages
+  url: packages/swift-navigation-packages.yml
+- type: CLI
+  url: cli/swift-navigation-cli.yml
+- type: Authentication
+  url: authentication/swift-navigation-authentication.yml
+- type: Conventions
+  url: conventions/swift-navigation-conventions.yml
+- type: Lifecycle
+  url: lifecycle/swift-navigation-lifecycle.yml
+- type: Deprecation
+  url: lifecycle/swift-navigation-lifecycle.yml
+- type: ChangeLog
+  url: changelog/swift-navigation-changelog.yml
+- type: Vocabulary
+  url: vocabulary/swift-navigation-vocabulary.yml
+- type: DataModel
+  url: data-model/swift-navigation-data-model.yml
+- type: Examples
+  url: examples/swift-navigation-examples.yml
+- type: RateLimits
+  url: rate-limits/swift-navigation-rate-limits.yml
+- type: Plans
+  url: plans/swift-navigation-plans-pricing.yml
+- type: LLMsTxt
+  url: llms/swift-navigation-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: OAuthScopes
+  url: scopes/swift-navigation-scopes.yml
+- type: Protobuf
+  url: grpc/swift-navigation-sora-api.yml
+- type: JSONSchema
+  url: json-schema/swift-navigation-json-schema.yml
+- type: Specification
+  url: spec/swift-navigation-sbp-spec.yml
+x-enrichment:
+  date: '2026-08-29'
+  status: enriched
+  artifacts_added: 294
+  pass: local-v1

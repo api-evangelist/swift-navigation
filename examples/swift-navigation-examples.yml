@@ -1,0 +1,105 @@
+generated: '2026-08-29'
+method: probed
+source: Live anonymous HTTP/NTRIP requests made on 2026-08-29
+name: Swift Navigation captured API responses
+description: >-
+  Real responses, captured verbatim from surfaces that answer without credentials. Swift Navigation
+  publishes no request/response examples of its own — there is no OpenAPI, no Postman collection and
+  no reference with sample payloads — so these probed captures are the only concrete examples in the
+  profile. Every one is a live 200; none is constructed.
+examples:
+  - file: swift-navigation-skylark-ntrip-sourcetable-na.all-freq.txt
+    request: 'GET http://na.all-freq.skylark.swiftnav.com:2101/ (Ntrip-Version: Ntrip/2.0)'
+    status: 200
+    content_type: gnss/sourcetable
+    auth: none
+    describes: >-
+      NTRIP sourcetable for the North America all-frequency caster — one CAS record, one NET record
+      and 9 STR records covering the Dx, Cx and Nx RTK mountpoints with their RTCM message numbers.
+  - file: swift-navigation-skylark-ntrip-sourcetable-na.l1l2.txt
+    request: 'GET http://na.l1l2.skylark.swiftnav.com:2101/'
+    status: 200
+    content_type: gnss/sourcetable
+    auth: none
+    streams: 13
+  - file: swift-navigation-skylark-ntrip-sourcetable-na.l1l5.txt
+    request: 'GET http://na.l1l5.skylark.swiftnav.com:2101/'
+    status: 200
+    content_type: gnss/sourcetable
+    auth: none
+    streams: 13
+  - file: swift-navigation-skylark-ntrip-sourcetable-eu.all-freq.txt
+    request: 'GET http://eu.all-freq.skylark.swiftnav.com:2101/'
+    status: 200
+    content_type: gnss/sourcetable
+    auth: none
+    streams: 10
+  - file: swift-navigation-skylark-ntrip-sourcetable-eu.l1l2.txt
+    request: 'GET http://eu.l1l2.skylark.swiftnav.com:2101/'
+    status: 200
+    content_type: gnss/sourcetable
+    auth: none
+    streams: 14
+  - file: swift-navigation-skylark-ntrip-sourcetable-ap.all-freq.txt
+    request: 'GET http://ap.all-freq.skylark.swiftnav.com:2101/'
+    status: 200
+    content_type: gnss/sourcetable
+    auth: none
+    streams: 8
+  - file: swift-navigation-skylark-ntrip-sourcetable-ap.l1l2.txt
+    request: 'GET http://ap.l1l2.skylark.swiftnav.com:2101/'
+    status: 200
+    content_type: gnss/sourcetable
+    auth: none
+    streams: 12
+  - file: swift-navigation-skylark-receiver-catalog.json
+    request: 'GET https://www.swiftnav.com/wp-json/e4lm6SFEc9/data/'
+    status: 200
+    content_type: application/json
+    auth: none
+    describes: >-
+      The receiver compatibility catalog behind https://www.swiftnav.com/compatibility-checker —
+      {"version":"v1","count":134,"items":[...]}, each item naming a brand, receiver model, which
+      Skylark variants it works with, and a configuration statement. This is the most genuinely
+      useful piece of first-party data Swift Navigation exposes to a machine.
+  - file: swift-navigation-skylark-country-availability.json
+    request: 'GET https://www.swiftnav.com/wp-json/gy9i81x4mh/data'
+    status: 200
+    content_type: application/json
+    auth: none
+    describes: >-
+      Per-country Skylark availability as a flat array of {name, nx, cx, dx} booleans — the machine
+      readable form of the coverage question the FAQ answers in prose.
+not_saved:
+  - request: 'GET https://www.swiftnav.com/wp-json/exwatcvlc7/data'
+    status: 200
+    reason: >-
+      Skylark support FAQ. Read and used to source the reversibility, plans and rate-limit findings,
+      but it is marketing copy rather than an API payload, so it is cited rather than stored.
+  - request: 'GET https://account.swiftnav.com/runtime-config.js'
+    status: 200
+    reason: >-
+      Real document and the source of the Skylark backend host discovery, but it carries a live
+      Stripe publishable key. Cited in well-known/ rather than stored.
+findings:
+  - id: staging-domain-leak
+    surface: 'GET https://www.swiftnav.com/wp-json/footer/v1/data'
+    status: 200
+    detail: >-
+      The production footer endpoint returns a logo URL pointing at an internal WordPress staging
+      host — "http://swiftnavstaging.local/wp-content/uploads/2025/02/logo-all-white-1-1.png". The
+      host is unresolvable outside Swift Navigation's network, so any consumer of this first-party
+      endpoint (including Swift's own Skylark User Portal, which reads it as FOOTER_DATA_URL) gets a
+      broken image. It is a content-migration artifact, not a security issue, but it is the kind of
+      defect that only shows up when someone actually calls the endpoint.
+    observed: '2026-08-29'
+  - id: undocumented-namespaces
+    surface: 'GET https://www.swiftnav.com/wp-json/'
+    status: 200
+    detail: >-
+      The WordPress REST index advertises 718 routes across 49 namespaces. Four of the namespaces
+      carrying first-party Skylark data use opaque, unversioned, randomly-generated slugs
+      (e4lm6SFEc9, gy9i81x4mh, scXotoUe, exwatcvlc7) alongside three conventional versioned ones
+      (footer/v1, country/v1, support/v1). The opaque slugs read as obscurity-by-naming rather than
+      access control — the endpoints are fully public and keyless — and they make the surface
+      impossible to depend on, because a slug rotation is indistinguishable from a deletion.

@@ -1,0 +1,152 @@
+generated: '2026-08-29'
+method: searched
+source: https://www.swiftnav.com/glossary (enumerated from https://www.swiftnav.com/page-sitemap.xml)
+name: Swift Navigation GNSS glossary
+description: >-
+  Swift Navigation publishes a 69-entry glossary of GNSS, positioning and automotive-safety
+  terminology, one crawlable page per term, all listed in the site's own sitemap. It is the closest
+  thing the company has to a published vocabulary, and it is genuinely load-bearing for anyone
+  reading the rest of this profile: the mountpoint names, sourcetable fields and SBP message
+  semantics all assume these definitions. Terms are enumerated from the sitemap; the definitions
+  themselves live at the linked URLs and are not copied here.
+term_count: 69
+index: https://www.swiftnav.com/glossary
+terms:
+  - term: observations in gnss
+    url: https://www.swiftnav.com/glossary/what-are-observations-in-gnss
+  - term: cors continously operating reference station network
+    url: https://www.swiftnav.com/glossary/what-is-a-cors-continously-operating-reference-station-network
+  - term: datum
+    url: https://www.swiftnav.com/glossary/what-is-a-datum
+  - term: gnss constellation
+    url: https://www.swiftnav.com/glossary/what-is-a-gnss-constellation
+  - term: gnss measurement engine
+    url: https://www.swiftnav.com/glossary/what-is-a-gnss-measurement-engine
+  - term: gnss protection level
+    url: https://www.swiftnav.com/glossary/what-is-a-gnss-protection-level
+  - term: gnss rover
+    url: https://www.swiftnav.com/glossary/what-is-a-gnss-rover
+  - term: gnss station
+    url: https://www.swiftnav.com/glossary/what-is-a-gnss-station
+  - term: positioning engine
+    url: https://www.swiftnav.com/glossary/what-is-a-positioning-engine
+  - term: reference frame
+    url: https://www.swiftnav.com/glossary/what-is-a-reference-frame
+  - term: virtual reference station vrs
+    url: https://www.swiftnav.com/glossary/what-is-a-virtual-reference-station-vrs
+  - term: adas
+    url: https://www.swiftnav.com/glossary/what-is-adas
+  - term: alert limit
+    url: https://www.swiftnav.com/glossary/what-is-an-alert-limit
+  - term: inertial measurement unit imu
+    url: https://www.swiftnav.com/glossary/what-is-an-inertial-measurement-unit-imu
+  - term: rtk baseline
+    url: https://www.swiftnav.com/glossary/what-is-an-rtk-baseline
+  - term: asil
+    url: https://www.swiftnav.com/glossary/what-is-asil
+  - term: aspice
+    url: https://www.swiftnav.com/glossary/what-is-aspice
+  - term: beidou
+    url: https://www.swiftnav.com/glossary/what-is-beidou
+  - term: dead reckoning
+    url: https://www.swiftnav.com/glossary/what-is-dead-reckoning
+  - term: differential gnss
+    url: https://www.swiftnav.com/glossary/what-is-differential-gnss
+  - term: earth centered earth fixed
+    url: https://www.swiftnav.com/glossary/what-is-earth-centered-earth-fixed
+  - term: fixed rtk
+    url: https://www.swiftnav.com/glossary/what-is-fixed-rtk
+  - term: float rtk
+    url: https://www.swiftnav.com/glossary/what-is-float-rtk
+  - term: functional safety
+    url: https://www.swiftnav.com/glossary/what-is-functional-safety
+  - term: galileo
+    url: https://www.swiftnav.com/glossary/what-is-galileo
+  - term: geofencing
+    url: https://www.swiftnav.com/glossary/what-is-geofencing
+  - term: glonass
+    url: https://www.swiftnav.com/glossary/what-is-glonass
+  - term: gnss
+    url: https://www.swiftnav.com/glossary/what-is-gnss
+  - term: gnss accuracy
+    url: https://www.swiftnav.com/glossary/what-is-gnss-accuracy
+  - term: gnss precision
+    url: https://www.swiftnav.com/glossary/what-is-gnss-precision
+  - term: gps
+    url: https://www.swiftnav.com/glossary/what-is-gps
+  - term: gps jamming
+    url: https://www.swiftnav.com/glossary/what-is-gps-jamming
+  - term: gps latency
+    url: https://www.swiftnav.com/glossary/what-is-gps-latency
+  - term: gps spoofing
+    url: https://www.swiftnav.com/glossary/what-is-gps-spoofing
+  - term: hardware in the loop hitl testing
+    url: https://www.swiftnav.com/glossary/what-is-hardware-in-the-loop-hitl-testing
+  - term: integrity
+    url: https://www.swiftnav.com/glossary/what-is-integrity
+  - term: integrity risk
+    url: https://www.swiftnav.com/glossary/what-is-integrity-risk
+  - term: ionospheric delay
+    url: https://www.swiftnav.com/glossary/what-is-ionospheric-delay
+  - term: iso 21448 sotif
+    url: https://www.swiftnav.com/glossary/what-is-iso-21448-sotif
+  - term: iso 26262
+    url: https://www.swiftnav.com/glossary/what-is-iso-26262
+  - term: iso sae 21434
+    url: https://www.swiftnav.com/glossary/what-is-iso-sae-21434
+  - term: l band
+    url: https://www.swiftnav.com/glossary/what-is-l-band
+  - term: line of sight los in gnss gps
+    url: https://www.swiftnav.com/glossary/what-is-line-of-sight-los-in-gnss-gps
+  - term: multi constellation gnss
+    url: https://www.swiftnav.com/glossary/what-is-multi-constellation-gnss
+  - term: multipath error in gnss
+    url: https://www.swiftnav.com/glossary/what-is-multipath-error-in-gnss
+  - term: network rtk
+    url: https://www.swiftnav.com/glossary/what-is-network-rtk
+  - term: nmea
+    url: https://www.swiftnav.com/glossary/what-is-nmea
+  - term: ntrip
+    url: https://www.swiftnav.com/glossary/what-is-ntrip
+  - term: osr observation space representation in gnss
+    url: https://www.swiftnav.com/glossary/what-is-osr-observation-space-representation-in-gnss
+  - term: positioning navigation and timing pnt
+    url: https://www.swiftnav.com/glossary/what-is-positioning-navigation-and-timing-pnt
+  - term: ppp rtk
+    url: https://www.swiftnav.com/glossary/what-is-ppp-rtk
+  - term: precise point positioning ppp
+    url: https://www.swiftnav.com/glossary/what-is-precise-point-positioning-ppp
+  - term: pseudorange in gnss
+    url: https://www.swiftnav.com/glossary/what-is-pseudorange-in-gnss
+  - term: qzss
+    url: https://www.swiftnav.com/glossary/what-is-qzss
+  - term: rinex
+    url: https://www.swiftnav.com/glossary/what-is-rinex
+  - term: rtcm radio technical commission for maritime services
+    url: https://www.swiftnav.com/glossary/what-is-rtcm-radio-technical-commission-for-maritime-services
+  - term: rtk real time kinematic
+    url: https://www.swiftnav.com/glossary/what-is-rtk-real-time-kinematic
+  - term: safety of the intended functionality sotif
+    url: https://www.swiftnav.com/glossary/what-is-safety-of-the-intended-functionality-sotif
+  - term: sbas satellite based augmentation system
+    url: https://www.swiftnav.com/glossary/what-is-sbas-satellite-based-augmentation-system
+  - term: single baseline rtk
+    url: https://www.swiftnav.com/glossary/what-is-single-baseline-rtk
+  - term: software in the loop testing
+    url: https://www.swiftnav.com/glossary/what-is-software-in-the-loop-testing
+  - term: state space representation ssr in gnss
+    url: https://www.swiftnav.com/glossary/what-is-state-space-representation-ssr-in-gnss
+  - term: target integrity risk
+    url: https://www.swiftnav.com/glossary/what-is-target-integrity-risk
+  - term: international reference frame itrf
+    url: https://www.swiftnav.com/glossary/what-is-the-international-reference-frame-itrf
+  - term: wide area augmentation system waas
+    url: https://www.swiftnav.com/glossary/what-is-the-wide-area-augmentation-system-waas
+  - term: time to first fix
+    url: https://www.swiftnav.com/glossary/what-is-time-to-first-fix
+  - term: tropospheric delay
+    url: https://www.swiftnav.com/glossary/what-is-tropospheric-delay
+  - term: v2x vehicle to everything
+    url: https://www.swiftnav.com/glossary/what-is-v2x-vehicle-to-everything
+  - term: wheel odometry
+    url: https://www.swiftnav.com/glossary/what-is-wheel-odometry

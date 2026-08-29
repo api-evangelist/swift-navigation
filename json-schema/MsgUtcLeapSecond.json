@@ -1,0 +1,30 @@
+{
+  "copyright": [
+    "Copyright (C) 2019-2021 Swift Navigation Inc.",
+    "Contact: https://support.swiftnav.com",
+    "",
+    "This source is subject to the license found in the file 'LICENSE' which must",
+    "be distributed together with this source. All other rights reserved.",
+    "",
+    "THIS CODE AND INFORMATION IS PROVIDED 'AS IS' WITHOUT WARRANTY OF ANY KIND,",
+    "EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED",
+    "WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
+  ],
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "#MsgUtcLeapSecond",
+  "title":"MsgUtcLeapSecond",
+  "description":"UTC-GPST leap seconds before and after the most recent (past, or future, for announced insertions) UTC leap second insertion.\n",
+  "type": "object",
+  "properties": {
+    "count_before": {"type": "integer"},
+    "ref_wn": {"type": "integer"},
+    "ref_dn": {"type": "integer"},
+    "count_after": {"type": "integer"}
+  },
+  "required": [
+    "count_before",
+    "ref_wn",
+    "ref_dn",
+    "count_after"
+  ]
+}

@@ -1,0 +1,147 @@
+generated: '2026-08-29'
+method: searched
+source: >-
+  Probed NTRIP sourcetables (examples/) ; spec/ ; grpc/ ;
+  https://skylark-prod.us.auth0.com/.well-known/openid-configuration ;
+  https://support.swiftnav.com/support/solutions/articles/44002519397-ntrip-client-configuration-for-skylark-corrections ;
+  https://www.swiftnav.com/resource/press-release/skylark-precise-positioning-service-achieves-iso-26262-certification-for-the-functional-safety-of-road-vehicles
+name: Swift Navigation standards conformance
+standards:
+  - id: rtcm-sc104-v3
+    name: RTCM SC-104 v3.x (Differential GNSS Services)
+    domain_standard: true
+    conforms: true
+    evidence: >-
+      DECLARED IN THE CONTRACT, not in marketing prose. Every STR record in every probed Skylark
+      sourcetable names format RTCM3 and enumerates the exact RTCM message numbers the stream
+      carries — 1006, 1008, 1019, 1020, 1029, 1033, 1042, 1044, 1046 on every mountpoint, plus the
+      MSM tier (1071/1091/1121 for MSM1, 1074/1094/1124 for MSM4, 1075/1095/1125 for MSM5).
+      Verified 2026-08-29 by anonymous GET against seven casters, all HTTP 200, content-type
+      gnss/sourcetable.
+    location: examples/swift-navigation-skylark-ntrip-sourcetable-*.txt (STR records, field 4-5)
+    significance: >-
+      This is the domain standard for this market. A receiver that already speaks RTCM 3 MSM
+      consumes Skylark with no bespoke connector — which is exactly why Swift Navigation can publish
+      a 134-entry third-party receiver compatibility catalog. The OSR and SSR mountpoints are the
+      exception and carry Swift proprietary SBP messages instead.
+  - id: ntrip
+    name: NTRIP (Networked Transport of RTCM via Internet Protocol) 1.0 / 2.0
+    domain_standard: true
+    conforms: true
+    evidence: >-
+      Documented by the provider and confirmed by probe. The sourcetable is served at "/" with
+      content-type gnss/sourcetable and CAS/NET/STR record structure per the NTRIP specification;
+      port 2103 is documented as requiring NTRIP v2.
+    location: https://support.swiftnav.com/support/solutions/articles/44002519397-ntrip-client-configuration-for-skylark-corrections
+  - id: nmea-0183
+    name: NMEA 0183 (GGA)
+    domain_standard: true
+    conforms: true
+    evidence: >-
+      The NTRIP client-configuration article lists "NMEA GGA output" as a required client setting,
+      and the STR records carry nmea=1. Required for the VRS-based Nx RTK mountpoints, which need
+      the rover's approximate position to generate a virtual reference station.
+  - id: itrf-reference-frames
+    name: ITRF2020 / WGS84(G1674) / NAD83(2011) / ETRS89 (DREF91, ETRF2000)
+    domain_standard: true
+    conforms: true
+    evidence: >-
+      Encoded in the mountpoint NAMES themselves, which is unusually good practice — NXRTK-NAD83-MSM5,
+      NXRTK-DREF91-MSM5, NXRTK-ETRF2000-MSM5, NXRTK-WGS84-G1674-MSM5. A client picks its datum by
+      choosing a mountpoint, so the reference frame is part of the addressable contract rather than a
+      configuration flag.
+  - id: iso-26262
+    name: ISO 26262:2018 — Road vehicles, functional safety
+    domain_standard: true
+    conforms: true
+    evidence: >-
+      Skylark Precise Positioning Service certified compliant by third-party auditor UL Solutions,
+      announced 2024-06-04. Swift states it is the first cloud-based real-time service of any kind
+      to be certified against ISO 26262.
+    location: https://www.swiftnav.com/resource/press-release/skylark-precise-positioning-service-achieves-iso-26262-certification-for-the-functional-safety-of-road-vehicles
+    caveat: >-
+      The certificate itself is not published at a public URL — only the press release and product
+      pages assert it. No trust center, no downloadable certificate, no auditor reference number.
+  - id: oauth2
+    name: OAuth 2.0
+    conforms: true
+    evidence: >-
+      skylark-prod.us.auth0.com advertises authorization_code, client_credentials, refresh_token,
+      device_code and token-exchange grants in its discovery document (probed 200, 2026-08-29).
+  - id: oidc
+    name: OpenID Connect Discovery 1.0
+    conforms: true
+    evidence: >-
+      https://skylark-prod.us.auth0.com/.well-known/openid-configuration returns a complete metadata
+      document (issuer, authorization/token/jwks/revocation endpoints, S256 PKCE).
+    caveat: Served by Auth0 on Swift Navigation's behalf, not from a swiftnav.com host.
+  - id: rfc8628
+    name: RFC 8628 — OAuth 2.0 Device Authorization Grant
+    conforms: true
+    evidence: >-
+      Cited by name in the Sora contract itself, in the doc comment on
+      DeviceService.AuthServerInfo (grpc/swift-navigation-sora-device-v1beta-service.proto), and
+      advertised as urn:ietf:params:oauth:grant-type:device_code in the Auth0 discovery document.
+  - id: grpc-protobuf
+    name: gRPC / Protocol Buffers proto3
+    conforms: true
+    evidence: 34 RPCs across two services, published as a public Buf Schema Registry module.
+    location: grpc/
+  - id: json-schema
+    name: JSON Schema draft-06
+    conforms: true
+    evidence: >-
+      225 published schemas declaring "$schema": "http://json-schema.org/draft-06/schema#".
+      Two of the 225 (MsgStartup.json, MsgCellModemStatus.json) do not parse as strict JSON — see
+      json-schema/swift-navigation-json-schema.yml.
+    location: json-schema/
+  - id: rfc9457
+    name: RFC 9457 — Problem Details for HTTP APIs
+    conforms: false
+    evidence: No HTTP API surface; no problem+json anywhere.
+  - id: idempotency
+    name: Idempotency keys
+    conforms: false
+    evidence: Not documented on any surface. See conventions/.
+  - id: pagination
+    name: Cursor pagination
+    conforms: true
+    evidence: >-
+      Sora AppService documents a stable, unique, opaque, ordered cursor model in prose inside the
+      proto. Applies to that surface only.
+  - id: openapi
+    name: OpenAPI
+    conforms: false
+    evidence: >-
+      No OpenAPI is published anywhere. Probed on www.swiftnav.com, account.swiftnav.com,
+      account-service.skylark.swiftnav.com and subscription-service.skylark.swiftnav.com — all miss
+      (soft-404 HTML shells on the first two, clean text/plain 404s on the service hosts).
+  - id: asyncapi
+    name: AsyncAPI
+    conforms: false
+    evidence: >-
+      No AsyncAPI document, despite Skylark being a purely streaming product. The NTRIP sourcetable
+      is the closest machine-readable equivalent and is captured in
+      asyncapi/swift-navigation-skylark-ntrip-streams.yml.
+  - id: scim
+    name: SCIM
+    conforms: false
+  - id: odata
+    name: OData
+    conforms: false
+  - id: fhir
+    name: FHIR
+    conforms: false
+    note: Out of market.
+compliance_certifications:
+  - {name: 'ISO 26262:2018', scope: Skylark Precise Positioning Service, auditor: UL Solutions, announced: '2024-06-04', certificate_published: false}
+compliance_documents:
+  - {name: Data Processing Addendum, url: 'https://www.swiftnav.com/dpa', status: 200}
+  - {name: Terms and Conditions, url: 'https://www.swiftnav.com/terms-and-conditions', status: 200}
+  - {name: User Terms of Service, url: 'https://www.swiftnav.com/user-terms-of-service', status: 200}
+  - {name: Privacy Policy, url: 'https://www.swiftnav.com/privacy-policy', status: 200}
+gaps:
+  - >-
+    No SOC 2, ISO 27001, PCI DSS or similar security certification is claimed or published anywhere,
+    and there is no trust center. The only certification Swift Navigation publishes is a functional
+    safety one.

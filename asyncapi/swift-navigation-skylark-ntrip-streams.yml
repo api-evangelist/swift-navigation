@@ -1,0 +1,125 @@
+generated: '2026-08-29'
+method: probed
+source: >-
+  NTRIP sourcetables fetched from each Skylark caster on 2026-08-29, cross-read against
+  https://support.swiftnav.com/support/solutions/articles/44002519397-ntrip-client-configuration-for-skylark-corrections
+name: Skylark correction stream catalog
+description: >-
+  Skylark's event surface is not webhooks and not AsyncAPI. It is a set of continuously-open NTRIP
+  streams: a client opens an HTTP GET against a caster mountpoint with Basic auth and the caster
+  writes RTCM v3.x correction frames until the connection drops, while the client pushes its own
+  position back up the same connection as NMEA GGA sentences. Swift Navigation publishes NO AsyncAPI
+  document, so none is asserted here and no AsyncAPI or Webhooks pointer is emitted. What IS machine
+  readable is the NTRIP sourcetable each caster serves anonymously at "/" — a real, keyless,
+  content-typed (gnss/sourcetable) catalog of every stream, its RTCM message set and its
+  constellations. Those were probed and saved verbatim under examples/.
+protocol:
+  name: NTRIP
+  versions: ['1.0', '2.0']
+  transport: HTTP/1.1 (v1) and HTTP/1.1 with Ntrip-Version header (v2)
+  payload: RTCM 3.x, plus Swift proprietary SBP-in-RTCM for the OSR/SSR mountpoints
+  client_uplink: NMEA GGA position sentences (required by the VRS-based Nx RTK mountpoints)
+  discovery:
+    method: GET /
+    accept: any
+    auth: none
+    content_type: gnss/sourcetable
+    note: >-
+      The sourcetable is served WITHOUT credentials. That is the one part of Skylark an agent can
+      read today with nothing issued to it, and it is genuinely useful — it enumerates every
+      mountpoint, its RTCM message numbers, and its constellation set.
+endpoint_pattern: '<region>.<frequency>.skylark.swiftnav.com:<port>'
+regions:
+  NA: North America
+  EU: Europe
+  AP: Asia Pacific
+frequencies:
+  L1L2: L1/L2
+  L1L5: L1/L5
+  all-freq: L1/L2/L5/L6
+ports:
+  - {port: 2101, transport: plain, note: standard NTRIP connection}
+  - {port: 2102, transport: tls, note: TLS-encrypted}
+  - {port: 2103, transport: mtls, note: mutual TLS; requires NTRIP v2}
+casters_probed:
+  - host: na.all-freq.skylark.swiftnav.com
+    port: 2101
+    status: 200
+    content_type: gnss/sourcetable
+    streams: 9
+    file: ../examples/swift-navigation-skylark-ntrip-sourcetable-na.all-freq.txt
+  - host: na.l1l2.skylark.swiftnav.com
+    port: 2101
+    status: 200
+    content_type: gnss/sourcetable
+    streams: 13
+    file: ../examples/swift-navigation-skylark-ntrip-sourcetable-na.l1l2.txt
+  - host: na.l1l5.skylark.swiftnav.com
+    port: 2101
+    status: 200
+    content_type: gnss/sourcetable
+    streams: 13
+    file: ../examples/swift-navigation-skylark-ntrip-sourcetable-na.l1l5.txt
+  - host: eu.all-freq.skylark.swiftnav.com
+    port: 2101
+    status: 200
+    content_type: gnss/sourcetable
+    streams: 10
+    file: ../examples/swift-navigation-skylark-ntrip-sourcetable-eu.all-freq.txt
+  - host: eu.l1l2.skylark.swiftnav.com
+    port: 2101
+    status: 200
+    content_type: gnss/sourcetable
+    streams: 14
+    file: ../examples/swift-navigation-skylark-ntrip-sourcetable-eu.l1l2.txt
+  - host: ap.all-freq.skylark.swiftnav.com
+    port: 2101
+    status: 200
+    content_type: gnss/sourcetable
+    streams: 8
+    file: ../examples/swift-navigation-skylark-ntrip-sourcetable-ap.all-freq.txt
+  - host: ap.l1l2.skylark.swiftnav.com
+    port: 2101
+    status: 200
+    content_type: gnss/sourcetable
+    streams: 12
+    file: ../examples/swift-navigation-skylark-ntrip-sourcetable-ap.l1l2.txt
+  - host: na.all-freq.skylark.swiftnav.com
+    port: 2102
+    status: 200
+    content_type: gnss/sourcetable
+    streams: 9
+    note: TLS caster returns the same catalog as the plain-text caster on 2101.
+mountpoints:
+  skylark_dx:
+    - {name: DX-MSM1, format: RTCM3 MSM1, content: DGNSS code corrections, frame: ITRF2020 current epoch}
+  skylark_cx:
+    - {name: MSM4, format: RTCM3 MSM4, content: Wide-lane RTK corrections, frame: ITRF2020 current epoch}
+    - {name: MSM5, format: RTCM3 MSM5, content: Wide-lane RTK corrections, frame: ITRF2020 current epoch}
+    - {name: OSR, format: Swift proprietary, content: Observation Space Representation, frame: ITRF2020 current epoch}
+    - {name: SSR, format: Swift proprietary, content: State Space Representation, frame: ITRF2020 current epoch}
+    - {name: SSR-integrity, format: Swift proprietary, content: SSR with integrity bounds, frame: ITRF2020 current epoch}
+    - {name: SSR-integrity-AES-CMAC, format: Swift proprietary, content: SSR with integrity, AES-CMAC message signing, frame: ITRF2020 current epoch}
+  skylark_nx_rtk:
+    - {name: NXRTK-MSM5, format: RTCM3 MSM5, frame: ITRF2020 current epoch, availability: all regions}
+    - {name: NXRTK-WGS84-G1674-MSM5, format: RTCM3 MSM5, frame: WGS84(G1674) epoch 2005.0, availability: all regions}
+    - {name: NXRTK-NAD83-MSM5, format: RTCM3 MSM5, frame: NAD83(2011) epoch 2010.0, availability: contiguous United States only}
+    - {name: NXRTK-DREF91-MSM5, format: RTCM3 MSM5, frame: ETRS89 DREF91(2016) epoch 1989.0, availability: Europe only}
+    - {name: NXRTK-ETRF2000-MSM5, format: RTCM3 MSM5, frame: ETRS89 ETRF2000 epoch 2010.0, availability: Europe only}
+    - {name: NXRTK-RTCM31, format: RTCM v3.1 (GPS only), frame: ITRF2020 current epoch, availability: all regions}
+rtcm_messages_advertised:
+  note: >-
+    Read directly from the STR records of the probed sourcetables, not from prose. Every Skylark
+    stream advertises the same base set plus its MSM tier.
+  base: [1006, 1008, 1019, 1020, 1029, 1033, 1042, 1044, 1046]
+  msm_by_mountpoint:
+    DX-MSM1: [1071, 1091, 1121]
+    MSM4: [1074, 1094, 1124]
+    MSM5: [1075, 1095, 1125]
+    NXRTK-MSM5: [1075, 1095, 1125]
+  constellations: GPS+GAL+BDS
+  carrier: 2 (full L1/L2)
+  nmea_required: true
+  authentication: 'B (Basic)'
+  encryption: 'N'
+  bitrate_advertised: 4000

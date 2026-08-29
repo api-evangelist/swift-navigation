@@ -1,0 +1,130 @@
+generated: '2026-08-29'
+method: probed
+source: Direct HTTP probes of every Swift Navigation host on 2026-08-29
+note: >-
+  Swift Navigation serves NO /.well-known document from any host it controls. Two failure modes
+  are worth separating. www.swiftnav.com is a WordPress site with a catch-all that 301s every
+  unknown path to the homepage and answers 200 with the marketing HTML — so /llms.txt,
+  /openapi.json and every /.well-known/* path "succeed" with a 200 that is a soft-404, not a
+  document. account.swiftnav.com (the Skylark User Portal SPA) does the same for /llms.txt and
+  /openapi.json and returns a bare 403 for /.well-known/*. NO WellKnown or SecurityTxt pointer is
+  emitted, because nothing here is a served document. The one real discovery document in Swift
+  Navigation's stack is the OpenID Connect metadata for its Auth0 tenant (skylark-prod.us.auth0.com),
+  saved below; it is hosted by Auth0 on Swift Navigation's behalf, not on a swiftnav.com host, and is
+  recorded as such.
+hosts:
+  - host: www.swiftnav.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 301
+        note: 301 to https://www.swiftnav.com/ which returns the marketing homepage. Soft-404.
+      - path: /.well-known/openid-configuration
+        status: 301
+        note: Soft-404 (catch-all redirect to homepage).
+      - path: /.well-known/oauth-authorization-server
+        status: 301
+        note: Soft-404 (catch-all redirect to homepage).
+      - path: /.well-known/api-catalog
+        status: 301
+        note: Soft-404 (catch-all redirect to homepage).
+      - path: /.well-known/ai-plugin.json
+        status: 301
+        note: Soft-404 (catch-all redirect to homepage).
+      - path: /.well-known/agent-card.json
+        status: 301
+        note: Soft-404 (catch-all redirect to homepage). No A2A agent card.
+      - path: /.well-known/agent.json
+        status: 301
+        note: Soft-404 (catch-all redirect to homepage). No legacy A2A agent card either.
+      - path: /llms.txt
+        status: 301
+        note: Soft-404 (catch-all redirect to homepage). No llms.txt is published.
+      - path: /robots.txt
+        status: 200
+        note: >-
+          Real document, two lines - "User-agent: *" / "Allow: /". Fully permissive; nothing in this
+          pipeline was blocked by robots.
+  - host: account.swiftnav.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 403
+      - path: /.well-known/openid-configuration
+        status: 403
+      - path: /.well-known/oauth-authorization-server
+        status: 403
+      - path: /.well-known/api-catalog
+        status: 403
+      - path: /.well-known/agent-card.json
+        status: 403
+      - path: /.well-known/agent.json
+        status: 403
+      - path: /llms.txt
+        status: 200
+        note: >-
+          NOT a document. The Skylark User Portal SPA answers every unmatched path with its index.html
+          shell (<title>Skylark User Portal</title>). Treated as a miss.
+      - path: /openapi.json
+        status: 200
+        note: NOT a document - same SPA index.html shell. Treated as a miss.
+      - path: /runtime-config.js
+        status: 200
+        note: >-
+          Real document, and the single most useful thing on this host. It is the portal's public
+          runtime configuration and it names the Skylark backend API hosts
+          (account-service.skylark.swiftnav.com, subscription-service.skylark.swiftnav.com), the
+          Auth0 tenant, and four first-party wp-json data endpoints on www.swiftnav.com. Not saved
+          verbatim to this repo because it also carries a live Stripe publishable key.
+  - host: account-service.skylark.swiftnav.com
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /openapi.json
+        status: 404
+        note: >-
+          Clean text/plain 404 from a real service, not an HTML shell - so this host genuinely
+          publishes no contract, rather than hiding one behind a JS docs site.
+  - host: subscription-service.skylark.swiftnav.com
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /openapi.json
+        status: 404
+  - host: support.swiftnav.com
+    documents:
+      - path: /robots.txt
+        status: 200
+        note: >-
+          Freshdesk-hosted knowledge base. Disallows /support/search, /support/tickets/,
+          /support/login and /helpdesk/; publishes a sitemap at /support/sitemap.xml with 152 URLs.
+          The API-relevant articles are all crawlable.
+      - path: /.well-known/security.txt
+        status: 404
+  - host: skylark-prod.us.auth0.com
+    note: >-
+      Auth0 tenant operated for Swift Navigation's Skylark platform. Named as AUTH0_DOMAIN in
+      https://account.swiftnav.com/runtime-config.js, which is how the tenant was identified. Not a
+      swiftnav.com host, so this does NOT earn Swift Navigation a WellKnown pointer - recorded here
+      because it is the only real OAuth/OIDC discovery document in the stack.
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 200
+        file: swift-navigation-skylark-auth0-openid-configuration.json
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        note: Identical 2578-byte body to the OIDC document; not saved twice.

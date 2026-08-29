@@ -1,0 +1,75 @@
+generated: '2026-08-29'
+method: searched
+source: >-
+  https://www.swiftnav.com/products/skylark ;
+  https://support.swiftnav.com/support/solutions/articles/44002287337-skylark-portal-user-guide ;
+  https://www.swiftnav.com/wp-json/exwatcvlc7/data (first-party Skylark FAQ, HTTP 200) ;
+  https://www.swiftnav.com/sitemap_index.xml (checked for a pricing page — none exists)
+name: Swift Navigation Skylark plans and pricing
+plan_count: 0
+detail: >-
+  Swift Navigation publishes NO prices at any public URL. There is no /pricing page — the path
+  redirects to the homepage — and no pricing page appears anywhere in the site's own sitemap index
+  (152 support URLs, plus the page/post/news sitemaps, all checked 2026-08-29). What IS published is
+  the SHAPE of the commercial model: three Skylark variants, monthly or annual billing terms,
+  per-DEVICE subscriptions with no minimum or maximum device count, a 14-day free trial once per
+  account on the first device with no payment method required, and Stripe-backed self-service
+  checkout. The actual amounts only become visible after signing in to the Skylark User Portal and
+  starting a device. Recording plan_count: 0 is therefore a statement about disclosure, not about the
+  product: the plans exist and are self-service, but a buyer or an agent cannot compare them without
+  creating an account.
+model:
+  billing_unit: per device
+  billing_terms: [monthly, annual]
+  term_change: >-
+    Switchable at any time. Changing term starts the new plan immediately, credits unused time on the
+    old one, and charges the balance right away; the billing cycle resets.
+  minimum_devices: 1
+  maximum_devices: unlimited
+  payment_methods: [credit card, debit card, US bank account / bank transfer, Apple Pay, Google Pay]
+  payment_processor: Stripe
+  invoicing: Payment history is delegated to a Stripe-hosted dashboard, authenticated by account email.
+  promo_codes: true
+  enterprise_motion: >-
+    "Contact Sales" alongside self-service. Automotive and MNO-partner deals are clearly negotiated,
+    not listed.
+tiers:
+  - name: Skylark Nx RTK
+    price: null
+    currency: null
+    period: null
+    accuracy: 1-2 cm
+    fix_time: instant
+    technique: Network RTK on Virtual Reference Stations with atmospheric modeling
+    fit: robotics, surveying, mapping, drone inspection, construction
+    note: Price not published.
+  - name: Skylark Cx
+    price: null
+    currency: null
+    period: null
+    accuracy: 3-7 cm
+    fix_time: under 20 seconds
+    technique: PPP-RTK, continent-wide uniform performance; OSR and SSR formats; optional integrity
+    certification: ISO 26262:2018 (UL Solutions)
+    fit: automotive, ADAS, autonomy
+    note: Price not published.
+  - name: Skylark Dx
+    price: null
+    currency: null
+    period: null
+    technique: Differential GNSS code corrections
+    fit: mobile handsets and IoT
+    note: Price not published.
+trial:
+  length_days: 14
+  payment_method_required: false
+  scope: once per account, first device only
+  variant_switching: >-
+    Free to switch variants during the trial. The variant in effect at the moment the trial expires
+    becomes the PERMANENT variant for that device on conversion.
+  on_expiry_without_payment_method: subscription does not renew and NTRIP credentials are disabled
+coverage_gate:
+  detail: >-
+    Availability is geographic, and Swift publishes it as data: GET
+    https://www.swiftnav.com/wp-json/gy9i81x4mh/data returns per-country booleans for nx, cx and dx.
+    Saved to examples/swift-navigation-skylark-country-availability.json.
