@@ -1,0 +1,25 @@
+aid: swift-navigation
+name: Swift Navigation
+description: 'Swift Navigation is a company surfaced via the API Evangelist harvest backlog (source: secondary-market;
+  backed by lemnos-labs) and added to the network as a stub for full-pipeline profiling.'
+url: https://raw.githubusercontent.com/api-evangelist/swift-navigation/refs/heads/main/apis.yml
+x-type: company
+x-source: harvest:secondary-market
+x-tier: stub
+x-tier-reason: harvest
+specificationVersion: '0.20'
+created: '2026-08-29'
+modified: '2026-08-29'
+tags:
+- Company
+apis: []
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
+- FN: APIs.json
+  email: info@apis.io
+x-backed-by:
+- lemnos-labs
+common:
+- type: Website
+  url: https://forgeglobal.com/swift-navigation_stock/
