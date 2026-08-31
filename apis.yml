@@ -88,6 +88,11 @@ apis:
   - Protocol
   - GNSS
   - Binary
+  - JSON-Schema
+  tags_raw:
+  - Protocol
+  - GNSS
+  - Binary
   - JSON Schema
   properties:
   - type: Specification

@@ -1,0 +1,21 @@
+{
+  "repo": "swift-navigation",
+  "feeds": [
+    {
+      "source": "https://support.swiftnav.com/support/home",
+      "feed_url": "https://support.swiftnav.com/support/home",
+      "title": "",
+      "saved": 0,
+      "method": "none"
+    },
+    {
+      "source": "https://www.swiftnav.com/resource-library",
+      "feed_url": "https://www.swiftnav.com/feed",
+      "title": "",
+      "saved": 1,
+      "method": "discovered"
+    }
+  ],
+  "post_count": 1,
+  "fetched": "2026-08-30T22:33:40Z"
+}
