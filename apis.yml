@@ -145,6 +145,9 @@ apis:
   - type: Examples
     url: examples/swift-navigation-examples.yml
 common:
+- type: License
+  name: MIT
+  url: https://github.com/swift-nav/libsbp/blob/master/LICENSE
 - type: DomainSecurity
   url: security/swift-navigation-domain-security.yml
 - type: Website
