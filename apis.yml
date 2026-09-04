@@ -13,6 +13,21 @@ description: >-
   its Starling positioning engine, along with generated client libraries in six languages, and it
   publishes the complete gRPC contract for its Sora location time-series service on the Buf Schema
   Registry.
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  - scopes
+  - rate-limits
+  - security
+  generated: '2026-09-02'
+  method: derived
 image: https://www.swiftnav.com/wp-content/uploads/SwiftNav-Social-Card.png
 url: https://raw.githubusercontent.com/api-evangelist/swift-navigation/refs/heads/main/apis.yml
 x-type: company
