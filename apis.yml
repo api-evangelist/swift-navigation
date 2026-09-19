@@ -48,6 +48,20 @@ tags:
 - Geospatial
 - IoT
 - Robotics
+- Protocol
+tags_raw:
+- Company
+- GNSS
+- Precise Positioning
+- Location
+- Corrections
+- RTK
+- NTRIP
+- RTCM
+- Automotive
+- Geospatial
+- IoT
+- Robotics
 - Protocols
 maintainers:
 - FN: Kin Lane
