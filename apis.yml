@@ -117,12 +117,13 @@ apis:
   - Protocol
   - GNSS
   - Binary
-  - JSON-Schema
+  - JSON Schema
   tags_raw:
   - Protocol
   - GNSS
   - Binary
   - JSON Schema
+  - JSON-Schema
   properties:
   - type: Specification
     url: spec/swift-navigation-sbp-spec.yml
@@ -157,22 +158,20 @@ apis:
     url: https://github.com/swift-nav/sora-device-client
   - type: Documentation
     url: https://buf.build/swift-nav/sora-api
-- name: Swift Navigation Web Data Endpoints
-  description: >-
-    First-party, keyless JSON endpoints on the Swift Navigation website that power the Skylark User
-    Portal and the receiver compatibility checker — the 134-entry third-party receiver compatibility
-    catalog, per-country Skylark variant availability, the Skylark support FAQ, and site navigation.
-    They are named in the portal's own public runtime configuration but are not otherwise documented
-    or versioned consistently.
-  humanURL: https://www.swiftnav.com/compatibility-checker
+- aid: swift-navigation:swiftnav-com-website-wordpress-rest
+  name: Swift Navigation Website (WordPress REST)
+  description: 'The public WordPress REST API (wp-json) of the Swift Navigation website at www.swiftnav.com:
+    the route index of the site''s content management system, catalogued as one site surface rather than
+    as separate APIs.'
   baseURL: https://www.swiftnav.com/wp-json
   tags:
-  - JSON
-  - Catalog
-  - Undocumented
+  - WordPress
+  x-surface: platform-generated
   properties:
-  - type: Examples
-    url: examples/swift-navigation-examples.yml
+  - type: Documentation
+    url: https://www.swiftnav.com/wp-json
+  x-platform: wordpress
+  x-platform-surface: rest
 common:
 - type: License
   name: MIT
